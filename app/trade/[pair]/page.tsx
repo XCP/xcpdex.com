@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Divider } from '@/components/divider'
-import Chart from '@/components/chart';
 import ApexChart from '@/components/apex-chart';
 import ApexAreaChart from '@/components/apex-areachart';
 import { Heading, Subheading } from '@/components/heading';

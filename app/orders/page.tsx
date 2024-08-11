@@ -1,13 +1,14 @@
-"use client";
+'use client';
 
 import { Orders } from '@/components/orders';
 import { Heading } from '@/components/heading';
 import { Select } from '@/components/select';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
+import { ArrowPathIcon } from '@heroicons/react/16/solid';
 
 export default function OrdersPage() {
   const [status, setStatus] = useState('all');
-  const endpoint = 'https://api.counterparty.info/v2/orders';
+  const endpoint = 'https://api.counterparty.io/v2/orders';
 
   return (
     <>
@@ -28,7 +29,15 @@ export default function OrdersPage() {
           </Select>
         </div>
       </div>
-      <Orders endpoint={endpoint} status={status} />
+      <Suspense
+        fallback={
+          <div className="flex flex-col justify-center items-center h-48 my-24">
+            <ArrowPathIcon className="h-10 w-10 text-gray-500 animate-spin" />
+          </div>
+        }
+      >
+        <Orders endpoint={endpoint} status={status} />
+      </Suspense>
     </>
   );
 }

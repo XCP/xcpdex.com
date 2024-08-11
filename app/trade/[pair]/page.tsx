@@ -38,7 +38,14 @@ function Stat({ title, value, change }: StatProps) {
   );
 }
 
-function OrderBook({ market, side, setBaseAsset, setQuoteAsset }) {
+interface OrderBookProps {
+  market: string;
+  side: string;
+  setBaseAsset: (asset: string) => void;
+  setQuoteAsset: (asset: string) => void;
+}
+
+function OrderBook({ market, side, setBaseAsset, setQuoteAsset }: OrderBookProps) {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {

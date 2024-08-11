@@ -5,14 +5,15 @@ import { Heading } from '@/components/heading';
 import { Select } from '@/components/select';
 import { useState } from 'react';
 
-export default function OrdersPage() {
+export default function AddressOrdersPage({ params }: { params: { address: string } }) {
+  const { address } = params;
   const [status, setStatus] = useState('all');
-  const endpoint = 'https://api.counterparty.info/v2/orders';
+  const endpoint = `https://api.counterparty.info/v2/addresses/${address}/orders`;
 
   return (
     <>
       <div className="flex items-center lg:items-end justify-between gap-4">
-        <Heading>Orders</Heading>
+        <Heading>{address}</Heading>
         <div className="ml-auto w-auto relative">
           <Select
             name="status"

@@ -188,8 +188,8 @@ export default function TradePage({ params }: TradePageParams) {
           </div>
         </div>
         <div className="flex gap-4">
-          <Button outline>Edit</Button>
-          <Button>View</Button>
+          <Button href={`https://www.xcp.io/asset/${baseAsset}`} outline>XCP.io</Button>
+          <Button href="#">Trade</Button>
         </div>
       </div>
       <div className="grid gap-8 sm:grid-cols-3">

@@ -7,14 +7,8 @@ import { Heading } from '@/components/heading';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table';
 import { Select } from '@/components/select';
 import { formatDistanceToNow } from 'date-fns';
-import {
-  Order,
-  getTradingDirection,
-  getBaseAssetString,
-  getTradingPairString,
-  calculatePrice,
-  calculateAmount
-} from '@/utils/tradingPairUtils';
+import { Order, getTradingDirection, getBaseAssetString, getTradingPairString, calculatePrice, calculateAmount } from '@/utils/tradingPairUtils';
+import { ArrowPathIcon } from '@heroicons/react/16/solid';
 
 async function fetchOrders(status: string): Promise<Order[]> {
   const res = await fetch(`https://api.counterparty.info/v2/orders?verbose=true${status !== 'all' ? `&status=${status}` : ''}`);
@@ -23,13 +17,16 @@ async function fetchOrders(status: string): Promise<Order[]> {
 }
 
 export default function Orders() {
-  const [orders, setOrders] = useState<Order[]>([]); 
+  const [orders, setOrders] = useState<Order[]>([]);
   const [status, setStatus] = useState('all');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadOrders() {
+      setLoading(true);
       const fetchedOrders = await fetchOrders(status);
       setOrders(fetchedOrders);
+      setLoading(false);
     }
     loadOrders();
   }, [status]);
@@ -39,11 +36,11 @@ export default function Orders() {
       <div className="flex items-center lg:items-end justify-between gap-4">
         <Heading>Orders</Heading>
         <div className="ml-auto w-auto relative">
-          <Select 
-            name="status" 
-            value={status} 
-            onChange={(e) => setStatus(e.target.value)} 
-            style={{ width: 'fit-content' }}
+          <Select
+            name="status"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            className="w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           >
             <option value="all">All</option>
             <option value="open">Open</option>
@@ -53,55 +50,74 @@ export default function Orders() {
           </Select>
         </div>
       </div>
-      <Table className="mt-8 [--gutter:theme(spacing.6)] lg:[--gutter:theme(spacing.10)]">
-        <TableHead>
-          <TableRow>
-            <TableHeader>Side</TableHeader>
-            <TableHeader>Market</TableHeader>
-            <TableHeader>Price</TableHeader>
-            <TableHeader className="hidden 2xl:table-cell">Amount</TableHeader>
-            <TableHeader>Status</TableHeader>
-            <TableHeader className="text-right">Time</TableHeader>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {orders.map((order) => {
-            const direction = getTradingDirection(order);
-            const statusColor =
-              order.status === 'open'
-                ? 'lime'
-                : order.status === 'filled'
-                ? 'sky'
-                : order.status === 'expired'
-                ? 'orange'
-                : order.status === 'cancelled'
-                ? 'red'
-                : 'zinc';
 
-            return (
-              <TableRow key={order.tx_index} href={`/trade/${getTradingPairString(order).replace('/', '_')}`} title={`Order #${order.tx_index}`}>
-                <TableCell>
-                  <Badge color={direction === 'buy' ? 'green' : 'red'} className="capitalize">{direction}</Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Avatar src={`https://api.xcp.io/img/icon/${getBaseAssetString(order)}`} className="size-6" />
-                    <span className="font-medium">{getTradingPairString(order)}</span>
-                  </div>
-                </TableCell>
-                <TableCell>{calculatePrice(order)} {getTradingPairString(order).split('/')[1]}</TableCell>
-                <TableCell className="hidden 2xl:table-cell">{calculateAmount(order)} {getTradingPairString(order).split('/')[0]}</TableCell>
-                <TableCell>
-                  <Badge color={statusColor} className="capitalize">{order.status}</Badge>
-                </TableCell>
-                <TableCell className="text-zinc-500 text-right">
-                  {formatDistanceToNow(new Date(order.block_time * 1000), { addSuffix: true }).replace('about ', '').replace('seconds ago', 'seconds').replace('minutes ago', 'minutes').replace('hours ago', 'hours')}
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+      {loading ? (
+        <div className="flex flex-col justify-center items-center h-48 my-24">
+          <ArrowPathIcon className="h-10 w-10 text-gray-500 animate-spin" />
+        </div>
+      ) : (
+        <Table className="mt-8 [--gutter:theme(spacing.6)] lg:[--gutter:theme(spacing.10)]">
+          <TableHead>
+            <TableRow>
+              <TableHeader>Side</TableHeader>
+              <TableHeader>Market</TableHeader>
+              <TableHeader>Price</TableHeader>
+              <TableHeader className="hidden 2xl:table-cell">Amount</TableHeader>
+              <TableHeader>Status</TableHeader>
+              <TableHeader className="text-right">Time</TableHeader>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {orders.map((order) => {
+              const direction = getTradingDirection(order);
+              const statusColor =
+                order.status === 'open'
+                  ? 'lime'
+                  : order.status === 'filled'
+                  ? 'sky'
+                  : order.status === 'expired'
+                  ? 'orange'
+                  : order.status === 'cancelled'
+                  ? 'red'
+                  : 'zinc';
+
+              return (
+                <TableRow key={order.tx_index} href={`/trade/${getTradingPairString(order).replace('/', '_')}`} title={`Order #${order.tx_index}`}>
+                  <TableCell>
+                    <Badge color={direction === 'buy' ? 'green' : 'red'} className="capitalize">
+                      {direction}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Avatar src={`https://api.xcp.io/img/icon/${getBaseAssetString(order)}`} className="size-6" />
+                      <span className="font-medium">{getTradingPairString(order)}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {calculatePrice(order)} {getTradingPairString(order).split('/')[1]}
+                  </TableCell>
+                  <TableCell className="hidden 2xl:table-cell">
+                    {calculateAmount(order)} {getTradingPairString(order).split('/')[0]}
+                  </TableCell>
+                  <TableCell>
+                    <Badge color={statusColor} className="capitalize">
+                      {order.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-zinc-500 text-right">
+                    {formatDistanceToNow(new Date(order.block_time * 1000), { addSuffix: true })
+                      .replace('about ', '')
+                      .replace('seconds ago', 'seconds')
+                      .replace('minutes ago', 'minutes')
+                      .replace('hours ago', 'hours')}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      )}
     </>
   );
 }

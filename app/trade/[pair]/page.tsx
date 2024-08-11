@@ -84,11 +84,11 @@ function OrderBook({ market, side, setBaseAsset, setQuoteAsset }: OrderBookProps
     fetchOrders();
   }, [market, side, setBaseAsset, setQuoteAsset]);
 
-  const baseSubtotal = (index) => {
+  const baseSubtotal = (index: number) => {
     return orders.slice(0, index + 1).reduce((sum, order) => sum + parseFloat(order.give_remaining_normalized), 0).toFixed(8);
   };
 
-  const quoteSubtotal = (index) => {
+  const quoteSubtotal = (index: number) => {
     return orders.slice(0, index + 1).reduce((sum, order) => sum + parseFloat(order.get_remaining_normalized), 0).toFixed(8);
   };
 

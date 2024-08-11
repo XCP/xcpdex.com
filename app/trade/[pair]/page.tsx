@@ -138,7 +138,13 @@ function OrderBook({ market, side, setBaseAsset, setQuoteAsset }: OrderBookProps
   );
 }
 
-export default function TradePage({ params }) {
+interface TradePageParams {
+  params: {
+    pair: string;
+  };
+}
+
+export default function TradePage({ params }: TradePageParams) {
   const tradingPair = params.pair;
   const market = tradingPair.replace('_', '/');
   const [activeInterval, setActiveInterval] = useState('1m'); // default interval

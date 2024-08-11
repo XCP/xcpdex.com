@@ -6,17 +6,24 @@ import { Badge } from '@/components/badge';
 import { Heading } from '@/components/heading';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table';
 import { Select } from '@/components/select';
-import { getTradingDirection, getBaseAssetString, getTradingPairString, calculatePrice, calculateAmount } from '@/utils/tradingPairUtils';
 import { formatDistanceToNow } from 'date-fns';
+import {
+  Order,
+  getTradingDirection,
+  getBaseAssetString,
+  getTradingPairString,
+  calculatePrice,
+  calculateAmount
+} from '@/utils/tradingPairUtils';
 
-async function fetchOrders(status: string) {
+async function fetchOrders(status: string): Promise<Order[]> {
   const res = await fetch(`https://api.counterparty.info/v2/orders?verbose=true${status !== 'all' ? `&status=${status}` : ''}`);
   const data = await res.json();
   return data.result;
 }
 
 export default function Orders() {
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<Order[]>([]); 
   const [status, setStatus] = useState('all');
 
   useEffect(() => {

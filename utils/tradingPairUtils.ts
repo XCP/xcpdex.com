@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 
-interface AssetInfo {
+export interface AssetInfo {
   asset_longname: string | null;
   description: string;
   issuer: string | null;
@@ -8,7 +8,7 @@ interface AssetInfo {
   locked: boolean;
 }
 
-interface Order {
+export interface Order {
   tx_index: number;
   tx_hash: string;
   block_index: number;

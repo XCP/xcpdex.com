@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 
 import { ApplicationLayout } from './application-layout'
+import Fathom from '../components/fathom';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+          <Fathom />
           <ApplicationLayout>{children}</ApplicationLayout>
       </body>
     </html>

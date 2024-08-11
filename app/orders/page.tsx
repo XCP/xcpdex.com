@@ -8,7 +8,7 @@ import { ArrowPathIcon } from '@heroicons/react/16/solid';
 
 export default function OrdersPage() {
   const [status, setStatus] = useState('all');
-  const endpoint = 'https://api.counterparty.io/v2/orders';
+  const endpoint = 'https://api.counterparty.info/v2/orders';
 
   return (
     <>

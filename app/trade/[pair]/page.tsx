@@ -11,6 +11,7 @@ import { Link } from '@/components/link';
 import { ChevronLeftIcon, PresentationChartBarIcon, PresentationChartLineIcon } from '@heroicons/react/16/solid';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table';
 import {
+  Order,
   assetsToTradingPair,
   getTradingDirection,
   calculatePrice,
@@ -46,7 +47,7 @@ interface OrderBookProps {
 }
 
 function OrderBook({ market, side, setBaseAsset, setQuoteAsset }: OrderBookProps) {
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
     const fetchOrders = async () => {

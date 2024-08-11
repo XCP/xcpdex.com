@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 
 import { ApplicationLayout } from './application-layout'
-import Fathom from '../components/fathom';
+import Fathom from '@/components/fathom';
 
 const inter = Inter({ subsets: ["latin"] });
 

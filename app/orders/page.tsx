@@ -36,7 +36,7 @@ export default function Orders() {
 
   return (
     <>
-      <div className="flex items-end justify-between gap-4">
+      <div className="flex items-center lg:items-end justify-between gap-4">
         <Heading>Orders</Heading>
         <div className="ml-auto w-auto relative">
           <Select 

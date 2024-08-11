@@ -76,7 +76,7 @@ export default function Orders() {
                 ? 'orange'
                 : order.status === 'cancelled'
                 ? 'red'
-                : 'gray';
+                : 'zinc';
 
             return (
               <TableRow key={order.tx_index} href={`/trade/${getTradingPairString(order).replace('/', '_')}`} title={`Order #${order.tx_index}`}>

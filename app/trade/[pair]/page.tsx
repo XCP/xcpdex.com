@@ -121,7 +121,7 @@ function OrderBook({ market, side, setBaseAsset, setQuoteAsset }: OrderBookProps
             </TableRow>
           )) : (
             <TableRow>
-              <TableCell className="text-center" colSpan="{5}">No {side} orders found.</TableCell>
+              <TableCell className="text-center" colSpan={5}>No {side} orders found.</TableCell>
             </TableRow>
           )}
         </TableBody>

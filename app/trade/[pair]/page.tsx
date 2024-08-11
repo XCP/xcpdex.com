@@ -65,11 +65,11 @@ function OrderBook({ market, side, setBaseAsset, setQuoteAsset }: OrderBookProps
 
         // Filter and sort orders based on side
         const filteredOrders = json.result
-          .filter(order => {
+          .filter((order: Order) => {
             const direction = getTradingDirection(order);
             return direction === side;
           })
-          .sort((a, b) => {
+          .sort((a: Order, b: Order) => {
             const priceA = parseFloat(calculatePrice(a));
             const priceB = parseFloat(calculatePrice(b));
             return side === 'buy' ? priceB - priceA : priceA - priceB;

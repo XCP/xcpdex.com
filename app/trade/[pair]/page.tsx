@@ -18,7 +18,13 @@ import {
   calculateTotal,
 } from '@/utils/tradingPairUtils';
 
-function Stat({ title, value, change }) {
+interface StatProps {
+  title: string;
+  value: string | number;
+  change: string;
+}
+
+function Stat({ title, value, change }: StatProps) {
   return (
     <div>
       <Divider />

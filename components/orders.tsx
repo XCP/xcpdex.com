@@ -7,7 +7,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { formatDistanceToNow } from 'date-fns';
 import { Order, getTradingDirection, getBaseAssetString, getTradingPairString, calculatePrice, calculateAmount } from '@/utils/tradingPairUtils';
 import { ArrowPathIcon } from '@heroicons/react/16/solid';
-import { Pagination, PaginationPrevious, PaginationNext } from '@/components/pagination';
+import {
+  Pagination,
+  PaginationGap,
+  PaginationList,
+  PaginationNext,
+  PaginationPage,
+  PaginationPrevious,
+} from '@/components/pagination';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 interface OrdersProps {
@@ -24,6 +31,8 @@ export function Orders({ endpoint, status = 'all' }: OrdersProps) {
   const searchParams = useSearchParams();
   const offset = parseInt(searchParams.get('offset') || '0');
   const limit = 100; // Number of orders per page
+  const currentPage = Math.floor(offset / limit) + 1;
+  const totalPages = Math.ceil(totalResults / limit);
 
   useEffect(() => {
     async function fetchOrders() {
@@ -50,6 +59,44 @@ export function Orders({ endpoint, status = 'all' }: OrdersProps) {
       return `?offset=${Math.max(offset - limit, 0)}`;
     }
     return null;
+  };
+
+  const buildPageHref = (page: number) => {
+    return `?offset=${(page - 1) * limit}`;
+  };
+
+  const renderPageNumbers = () => {
+    const pages = [];
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, currentPage + 2);
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(
+        <PaginationPage href={buildPageHref(i)} current={i === currentPage} key={i}>
+          {i}
+        </PaginationPage>
+      );
+    }
+
+    if (startPage > 1) {
+      pages.unshift(<PaginationGap key="start-gap" />);
+      pages.unshift(
+        <PaginationPage href={buildPageHref(1)} key={1}>
+          1
+        </PaginationPage>
+      );
+    }
+
+    if (endPage < totalPages) {
+      pages.push(<PaginationGap key="end-gap" />);
+      pages.push(
+        <PaginationPage href={buildPageHref(totalPages)} key={totalPages}>
+          {totalPages}
+        </PaginationPage>
+      );
+    }
+
+    return pages;
   };
 
   return loading ? (
@@ -123,6 +170,9 @@ export function Orders({ endpoint, status = 'all' }: OrdersProps) {
       </Table>
       <Pagination className="mt-6">
         <PaginationPrevious href={buildPreviousHref()} />
+        <PaginationList className="hidden lg:flex">
+          {renderPageNumbers()}
+        </PaginationList>
         <PaginationNext href={buildNextHref()} />
       </Pagination>
     </>

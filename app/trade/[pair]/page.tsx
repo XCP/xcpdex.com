@@ -8,6 +8,7 @@ import { Heading } from '@/components/heading';
 import { Badge } from '@/components/badge';
 import { Button } from '@/components/button';
 import { Link } from '@/components/link';
+import { OrderMatches } from '@/components/order-matches';
 import { ChevronLeftIcon, PresentationChartBarIcon, PresentationChartLineIcon } from '@heroicons/react/16/solid';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table';
 import {
@@ -240,6 +241,8 @@ export default function TradePage({ params }: TradePageParams) {
           <OrderBook market={market} side="sell" setBaseAsset={setBaseAsset} setQuoteAsset={setQuoteAsset} />
         </div>
       </div>
+      <Divider />
+      <OrderMatches market={market} />
     </>
   );
 }

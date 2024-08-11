@@ -4,10 +4,12 @@ import React, { useState, useEffect } from 'react';
 import ReactApexChart from 'react-apexcharts';
 
 interface ApexChartProps {
-  pairName: string;
+  pairSlug: string;
+  interval: string;
 }
 
-const ApexChart: React.FC<ApexChartProps> = ({ pairName }) => {
+const ApexChart: React.FC<ApexChartProps> = ({ pairSlug, interval }) => {
+  const market = pairSlug.replace('_', '/');
   const [series, setSeries] = useState<any[]>([]);
   const [options, setOptions] = useState<any>({
     chart: {
@@ -17,11 +19,16 @@ const ApexChart: React.FC<ApexChartProps> = ({ pairName }) => {
         enabled: true,
         type: 'xy',  
         autoScaleYaxis: false,  
-      }
+      },
     },
     title: {
-      text: 'XCP/BTC Trade History',
-      align: 'left'
+      text: market,
+      align: 'left',
+      style: {
+        fontFamily: 'Inter, Arial, sans-serif',
+        fontWeight: 'bold',
+        fontSize: '16px'
+      }
     },
     xaxis: {
       type: 'datetime'
@@ -39,15 +46,15 @@ const ApexChart: React.FC<ApexChartProps> = ({ pairName }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://api.xcp.io/api/v1/ohlc/${pairName}?interval=1M`);
+        const response = await fetch(`https://api.xcp.io/api/v1/ohlc/${pairSlug}?interval=${interval}`);
         const data = await response.json();
 
         if (Array.isArray(data.data)) {
           const formattedData = data.data.map((item: any) => {
-            const ohlc = item.ohlc_data && item.ohlc_data[0]; // Check if ohlc_data exists and access the first item
+            const ohlc = item.ohlc_data && item.ohlc_data[0];
             if (ohlc) {
               return {
-                x: new Date(item.timestamp * 1000), // assuming the timestamp is in seconds
+                x: new Date(item.timestamp * 1000),
                 y: [
                   parseFloat(ohlc.open),
                   parseFloat(ohlc.high),
@@ -56,9 +63,9 @@ const ApexChart: React.FC<ApexChartProps> = ({ pairName }) => {
                 ]
               };
             } else {
-              return null; // Return null for items with no valid OHLC data
+              return null;
             }
-          }).filter(Boolean); // Remove null entries from the array
+          }).filter(Boolean);
 
           setSeries([{ data: formattedData }]);
         } else {
@@ -70,7 +77,7 @@ const ApexChart: React.FC<ApexChartProps> = ({ pairName }) => {
     };
 
     fetchData();
-  }, [pairName]);
+  }, [pairSlug, interval]);
 
   return (
     <div>

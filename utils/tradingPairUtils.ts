@@ -110,6 +110,11 @@ export function getBaseAssetString(order: Order): string {
   return base;
 }
 
+export function getQuoteAssetString(order: Order): string {
+  const [quote] = assetsToTradingPair(order);
+  return quote;
+}
+
 export function getTradingDirection(order: Order): 'buy' | 'sell' {
   const [, quote] = assetsToTradingPair(order, true);
   return order.give_asset === quote ? 'buy' : 'sell';

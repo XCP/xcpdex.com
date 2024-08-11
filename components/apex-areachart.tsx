@@ -4,10 +4,12 @@ import React, { useState, useEffect } from 'react';
 import ReactApexChart from 'react-apexcharts';
 
 interface AreaChartProps {
-  pairName: string;
+  pairSlug: string;
+  interval: string;
 }
 
-const AreaChart: React.FC<AreaChartProps> = ({ pairName }) => {
+const AreaChart: React.FC<AreaChartProps> = ({ pairSlug, interval }) => {
+  const market = pairSlug.replace('_', '/');
   const [series, setSeries] = useState<any[]>([]);
   const [options, setOptions] = useState<any>({
     chart: {
@@ -30,8 +32,13 @@ const AreaChart: React.FC<AreaChartProps> = ({ pairName }) => {
       size: 0,
     },
     title: {
-      text: 'Stock Price Movement',
+      text: market,
       align: 'left',
+      style: {
+        fontFamily: 'Inter, Arial, sans-serif',
+        fontWeight: 'bold',
+        fontSize: '16px'
+      }
     },
     fill: {
       type: 'gradient',
@@ -44,9 +51,12 @@ const AreaChart: React.FC<AreaChartProps> = ({ pairName }) => {
       },
     },
     yaxis: {
-      title: {
-        text: 'Price',
+      tooltip: {
+        enabled: true
       },
+      decimalsInFloat: 2,
+      min: 0,
+      forceNiceScale: true
     },
     xaxis: {
       type: 'datetime',
@@ -56,7 +66,7 @@ const AreaChart: React.FC<AreaChartProps> = ({ pairName }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://api.xcp.io/api/v1/ohlc/${pairName}?interval=1M`);
+        const response = await fetch(`https://api.xcp.io/api/v1/ohlc/${pairSlug}?interval=${interval}`);
         const data = await response.json();
 
         if (Array.isArray(data.data)) {
@@ -64,15 +74,15 @@ const AreaChart: React.FC<AreaChartProps> = ({ pairName }) => {
             const ohlc = item.ohlc_data && item.ohlc_data[0];
             if (ohlc) {
               return {
-                x: new Date(item.timestamp * 1000), // assuming the timestamp is in seconds
-                y: parseFloat(ohlc.close), // Using the close price for the area chart
+                x: new Date(item.timestamp * 1000),
+                y: parseFloat(ohlc.close),
               };
             } else {
               return null;
             }
-          }).filter(Boolean); // Remove null entries from the array
+          }).filter(Boolean);
 
-          setSeries([{ name: pairName, data: formattedData }]);
+          setSeries([{ name: pairSlug, data: formattedData }]);
         } else {
           console.error('Unexpected data format:', data);
         }
@@ -82,7 +92,7 @@ const AreaChart: React.FC<AreaChartProps> = ({ pairName }) => {
     };
 
     fetchData();
-  }, [pairName]);
+  }, [pairSlug, interval]);
 
   return (
     <div>

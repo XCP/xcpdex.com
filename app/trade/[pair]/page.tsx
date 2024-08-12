@@ -20,6 +20,7 @@ import {
   calculateTotal,
 } from '@/utils/tradingPairUtils';
 import { formatAmount } from '@/utils/formatAmount';
+
 interface StatProps {
   title: string;
   value: string | number;
@@ -188,12 +189,13 @@ interface TradingPairData {
   base_asset: {
     supply: string;
     locked: boolean;
+    issued?: number;
+    burned?: number;
   };
   quote_asset: {
     symbol: string;
   };
 }
-
 
 export default function TradePage({ params }: TradePageParams) {
   const tradingPair = params.pair;

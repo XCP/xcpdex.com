@@ -53,34 +53,34 @@ function OrderBook({ market, side, setBaseAsset, setQuoteAsset }: OrderBookProps
   useEffect(() => {
     const fetchOrders = async () => {
       try {
+        // First attempt to fetch open orders
         const response = await fetch(`https://api.counterparty.info/v2/orders/${market}?status=open&verbose=true`);
         const json = await response.json();
-        
-        // Determine the base and quote assets from the first order
+    
+        // If there are open orders, determine the base and quote assets from the first order
         if (json.result.length > 0) {
           const firstOrder = json.result[0];
           const [base, quote] = assetsToTradingPair(firstOrder);
           setBaseAsset(base);
           setQuoteAsset(quote);
+        } else {
+          // If no open orders, fetch any order with limit 1 to determine the assets
+          const fallbackResponse = await fetch(`https://api.counterparty.info/v2/orders/${market}?status=all&limit=1&verbose=true`);
+          const fallbackJson = await fallbackResponse.json();
+          
+          if (fallbackJson.result.length > 0) {
+            const firstOrder = fallbackJson.result[0];
+            const [base, quote] = assetsToTradingPair(firstOrder);
+            setBaseAsset(base);
+            setQuoteAsset(quote);
+          } else {
+            console.error('No orders found for the market.');
+          }
         }
-
-        // Filter and sort orders based on side
-        const filteredOrders = json.result
-          .filter((order: Order) => {
-            const direction = getTradingDirection(order);
-            return direction === side;
-          })
-          .sort((a: Order, b: Order) => {
-            const priceA = parseFloat(calculatePrice(a));
-            const priceB = parseFloat(calculatePrice(b));
-            return side === 'buy' ? priceB - priceA : priceA - priceB;
-          });
-
-        setOrders(filteredOrders);
       } catch (error) {
-        console.error("Error fetching orders:", error);
+        console.error('Failed to fetch orders:', error);
       }
-    };
+    };    
 
     fetchOrders();
   }, [market, side, setBaseAsset, setQuoteAsset]);
@@ -176,7 +176,7 @@ export default function TradePage({ params }: TradePageParams) {
       <div className="mt-4 mb-8 flex flex-wrap items-end justify-between gap-4">
         <div className="flex flex-wrap items-center gap-6">
           <div className="w-20 shrink-0">
-            <img className="w-20 aspect-square rounded-lg shadow" src={`https://api.xcp.io/img/icon/${baseAsset}`} alt={tradingPair} />
+            <img className="w-20 aspect-square rounded-lg shadow" src={`https://api.xcp.io/img/full/${baseAsset}`} alt={tradingPair} />
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
@@ -189,7 +189,7 @@ export default function TradePage({ params }: TradePageParams) {
           </div>
         </div>
         <div className="flex gap-4">
-          <Button href={`https://www.xcp.io/asset/${baseAsset}`} outline>XCP.io</Button>
+          <Button href={`https://www.xcp.io/asset/${baseAsset}`} target="_blank" outline>XCP.io</Button>
           <Button href="#">Trade</Button>
         </div>
       </div>

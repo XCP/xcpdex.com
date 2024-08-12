@@ -222,12 +222,14 @@ export default function TradePage({ params }: TradePageParams) {
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
               <Heading>{market}</Heading>
             </div>
-            <div className="mt-2 text-sm/6 text-zinc-500">
-              Last traded on {new Date(pairData?.last_trade.confirmed_at * 1000).toLocaleDateString()} <span aria-hidden="true">·</span>{' '}
-              <a href={pairData?.last_trade.link} target="_blank" rel="noopener noreferrer">
-                Counterparty Dex
-              </a>
-            </div>
+            {pairData?.last_trade && (
+              <div className="mt-2 text-sm/6 text-zinc-500">
+                Last traded on {new Date(pairData.last_trade.confirmed_at * 1000).toLocaleDateString()} <span aria-hidden="true">·</span>{' '}
+                <a href={pairData.last_trade.link} target="_blank" rel="noopener noreferrer">
+                  Counterparty Dex
+                </a>
+              </div>
+            )}
           </div>
         </div>
         <div className="flex gap-4">

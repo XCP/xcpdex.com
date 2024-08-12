@@ -242,18 +242,38 @@ export default function TradePage({ params }: TradePageParams) {
           <>
             <Stat
               title="Last Price"
-              value={pairData.last_trade?.price_usd ? `$${formatAmount(pairData.last_trade.price_usd)}` : formatAmount(pairData.last_trade?.price) || 'N/A'}
-              subvalue={pairData.last_trade ? `${formatAmount(pairData.last_trade.price)} ${pairData.quote_asset.symbol}` : 'No Trades Yet'}
+              value={
+                pairData?.last_trade?.price_usd !== undefined
+                  ? `$${formatAmount(pairData.last_trade.price_usd)}`
+                  : pairData?.last_trade?.price !== undefined
+                    ? formatAmount(pairData.last_trade.price)
+                    : 'N/A'
+              }
+              subvalue={
+                pairData?.last_trade
+                  ? `${formatAmount(pairData.last_trade.price || 0)} ${pairData.quote_asset.symbol}`
+                  : 'No Trades Yet'
+              }
             />
             <Stat
               title="Market Cap"
-              value={pairData.market_cap_usd ? `$${formatAmount(pairData.market_cap_usd)}` : (pairData.market_cap != null ? formatAmount(pairData.market_cap) : 'N/A')}
-              subvalue={pairData.market_cap ? `${formatAmount(pairData.market_cap)} ${pairData.quote_asset.symbol}` : 'No Trades Yet'}
+              value={
+                pairData?.market_cap_usd !== undefined
+                  ? `$${formatAmount(pairData.market_cap_usd)}`
+                  : pairData?.market_cap !== undefined
+                    ? formatAmount(pairData.market_cap)
+                    : 'N/A'
+              }
+              subvalue={
+                pairData?.market_cap !== undefined
+                  ? `${formatAmount(pairData.market_cap || 0)} ${pairData.quote_asset.symbol}`
+                  : 'No Trades Yet'
+              }
             />
             <Stat
               title="Total Supply"
-              value={formatAmount(pairData.base_asset.supply)}
-              subvalue={pairData.base_asset.locked ? 'Locked' : 'Not Locked'}
+              value={formatAmount(pairData?.base_asset?.supply || 0)}
+              subvalue={pairData?.base_asset?.locked ? 'Locked' : 'Not Locked'}
             />
           </>
         ) : (

@@ -117,64 +117,74 @@ export function Orders({ endpoint, status = 'all' }: OrdersProps) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {orders.map((order) => {
-            const direction = getTradingDirection(order);
-            const statusColor =
-              order.status === 'open'
-                ? 'lime'
-                : order.status === 'filled'
-                ? 'sky'
-                : order.status === 'expired'
-                ? 'orange'
-                : order.status === 'cancelled'
-                ? 'red'
-                : 'zinc';
+          {orders.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={6} className="text-center text-zinc-500 py-24">
+                No orders found.
+              </TableCell>
+            </TableRow>
+          ) : (
+            orders.map((order) => {
+              const direction = getTradingDirection(order);
+              const statusColor =
+                order.status === 'open'
+                  ? 'lime'
+                  : order.status === 'filled'
+                  ? 'sky'
+                  : order.status === 'expired'
+                  ? 'orange'
+                  : order.status === 'cancelled'
+                  ? 'red'
+                  : 'zinc';
 
-            return (
-              <TableRow key={order.tx_index} href={`/trade/${getTradingPairString(order).replace('/', '_')}`} title={`Order #${order.tx_index}`}>
-                <TableCell>
-                  <Badge color={direction === 'buy' ? 'green' : 'red'} className="capitalize">
-                    {direction}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Avatar src={`https://api.xcp.io/img/icon/${getBaseAssetString(order)}`} className="size-6" />
-                    <span className="font-medium">{getTradingPairString(order)}</span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  {calculatePrice(order)} {getTradingPairString(order).split('/')[1]}
-                </TableCell>
-                <TableCell className="hidden 2xl:table-cell">
-                  {calculateAmount(order)} {getTradingPairString(order).split('/')[0]}
-                </TableCell>
-                <TableCell>
-                  <Badge color={statusColor} className="capitalize">
-                    {order.status}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-zinc-500 text-right">
-                  {formatDistanceToNow(new Date(order.block_time * 1000), { addSuffix: true })
-                    .replace('over ', '')
-                    .replace('about ', '')
-                    .replace('almost ', '')
-                    .replace('seconds ago', 'seconds')
-                    .replace('minutes ago', 'minutes')
-                    .replace('hours ago', 'hours')}
-                </TableCell>
-              </TableRow>
-            );
-          })}
+              return (
+                <TableRow key={order.tx_index} href={`/trade/${getTradingPairString(order).replace('/', '_')}`} title={`Order #${order.tx_index}`}>
+                  <TableCell>
+                    <Badge color={direction === 'buy' ? 'green' : 'red'} className="capitalize">
+                      {direction}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Avatar src={`https://api.xcp.io/img/icon/${getBaseAssetString(order)}`} className="size-6" />
+                      <span className="font-medium">{getTradingPairString(order)}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {calculatePrice(order)} {getTradingPairString(order).split('/')[1]}
+                  </TableCell>
+                  <TableCell className="hidden 2xl:table-cell">
+                    {calculateAmount(order)} {getTradingPairString(order).split('/')[0]}
+                  </TableCell>
+                  <TableCell>
+                    <Badge color={statusColor} className="capitalize">
+                      {order.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-zinc-500 text-right">
+                    {formatDistanceToNow(new Date(order.block_time * 1000), { addSuffix: true })
+                      .replace('over ', '')
+                      .replace('about ', '')
+                      .replace('almost ', '')
+                      .replace('seconds ago', 'seconds')
+                      .replace('minutes ago', 'minutes')
+                      .replace('hours ago', 'hours')}
+                  </TableCell>
+                </TableRow>
+              );
+            })
+          )}
         </TableBody>
       </Table>
-      <Pagination className="mt-6">
-        <PaginationPrevious href={buildPreviousHref()} />
-        <PaginationList className="hidden lg:flex">
-          {renderPageNumbers()}
-        </PaginationList>
-        <PaginationNext href={buildNextHref()} />
-      </Pagination>
+      {orders.length > 0 && (
+        <Pagination className="mt-6">
+          <PaginationPrevious href={buildPreviousHref()} />
+          <PaginationList className="hidden lg:flex">
+            {renderPageNumbers()}
+          </PaginationList>
+          <PaginationNext href={buildNextHref()} />
+        </Pagination>
+      )}
     </>
   );
 }

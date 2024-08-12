@@ -203,7 +203,7 @@ export default function TradePage({ params }: TradePageParams) {
           {['1d', '1w', '1m', '1y'].map(interval => (
             <button
               key={interval}
-              className={`px-3 py-2 text-sm font-medium ${activeInterval === interval ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700'}`}
+              className={`h-9	px-3 py-2 text-sm font-medium ${activeInterval === interval ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700'}`}
               onClick={() => setActiveInterval(interval)}
             >
               {interval}
@@ -212,13 +212,13 @@ export default function TradePage({ params }: TradePageParams) {
         </div>
         <div className="flex space-x-2 lg:space-x-4">
           <button
-            className={`px-3 py-2 text-sm font-medium ${activeTab === 'ohlc' ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700'}`}
+            className={`h-9	px-3 py-2 text-sm font-medium ${activeTab === 'ohlc' ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700'}`}
             onClick={() => setActiveTab('ohlc')}
           >
             <PresentationChartBarIcon className="size-4 fill-zinc-400 dark:fill-zinc-500" />
           </button>
           <button
-            className={`px-3 py-2 text-sm font-medium ${activeTab === 'area' ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700'}`}
+            className={`h-9	px-3 py-2 text-sm font-medium ${activeTab === 'area' ? 'bg-gray-100 text-gray-700' : 'text-gray-500 hover:text-gray-700'}`}
             onClick={() => setActiveTab('area')}
           >
             <PresentationChartLineIcon className="size-4 fill-zinc-400 dark:fill-zinc-500" />

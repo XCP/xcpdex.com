@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { Orders } from '@/components/orders';
 import { Heading } from '@/components/heading';
@@ -12,9 +12,15 @@ export default function AddressOrdersPage({ params }: { params: { address: strin
 
   return (
     <>
-      <div className="flex items-center lg:items-end justify-between gap-4">
-        <Heading>{address}</Heading>
-        <div className="ml-auto w-auto relative">
+      <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-4">
+        <div className="w-full lg:w-auto">
+          <Heading className="lg:hidden">Address</Heading>
+          <Heading className="hidden lg:block">{address}</Heading>
+          <div className="mt-2 text-sm text-zinc-500 lg:hidden">
+            {address}
+          </div>
+        </div>
+        <div className="w-full lg:w-auto mt-4 lg:mt-0">
           <Select
             name="status"
             value={status}

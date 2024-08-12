@@ -63,7 +63,7 @@ function Stat({ title, value, subvalue, issued = 0, burned = 0}: StatProps) {
               <Badge color="orange" className="flex items-center ml-4">
                 <FireIcon className="w-3 h-3 text-red-500" />
               </Badge>
-              <span className="ml-2 text-zinc-500">{burnPercentage.toFixed(2)}% Burned</span>
+              <span className="ml-2 text-zinc-500">{formatAmount(burnPercentage)}% Burned</span>
             </>
           )}
         </div>
@@ -259,7 +259,7 @@ export default function TradePage({ params }: TradePageParams) {
               title="Last Price"
               value={
                 pairData?.last_trade?.price_usd !== undefined
-                  ? `$${formatAmount(pairData.last_trade.price_usd)}`
+                  ? `$${formatAmount(pairData.last_trade.price_usd, true)}`
                   : pairData?.last_trade?.price !== undefined
                     ? formatAmount(pairData.last_trade.price)
                     : 'N/A'
@@ -274,7 +274,7 @@ export default function TradePage({ params }: TradePageParams) {
               title="Market Cap"
               value={
                 pairData?.market_cap_usd !== undefined
-                  ? `$${formatAmount(pairData.market_cap_usd)}`
+                  ? `$${formatAmount(pairData.market_cap_usd, true)}`
                   : pairData?.market_cap !== undefined
                     ? formatAmount(pairData.market_cap)
                     : 'N/A'
@@ -288,7 +288,7 @@ export default function TradePage({ params }: TradePageParams) {
             <Stat
               title="Total Supply"
               value={formatAmount(pairData?.base_asset?.supply || 0)}
-              subvalue={pairData?.base_asset?.locked ? 'Locked' : 'Not Locked'}
+              subvalue={pairData?.base_asset?.locked ? 'Locked' : 'Unlocked'}
               issued={pairData?.base_asset?.issued || 0}
               burned={pairData?.base_asset?.burned || 0}
             />

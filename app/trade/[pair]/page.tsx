@@ -220,7 +220,7 @@ export default function TradePage({ params }: TradePageParams) {
         {pairData ? (
           <>
             <Stat
-              title="Last Trade"
+              title="Last Price"
               value={pairData.last_trade?.price_usd ? `$${formatAmount(pairData.last_trade.price_usd)}` : formatAmount(pairData.last_trade?.price) || 'N/A'}
               subvalue={pairData.last_trade ? `${formatAmount(pairData.last_trade.price)} ${pairData.quote_asset.symbol}` : 'No Trades Yet'}
             />

@@ -158,7 +158,7 @@ export function Orders({ endpoint, status = 'all' }: OrdersProps) {
                   </TableCell>
                   <TableCell>
                     <Badge color={statusColor} className="capitalize">
-                      {order.status}
+                      {order.status.split(':')[0]}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-zinc-500 text-right">

@@ -9,7 +9,7 @@ import { Badge } from '@/components/badge';
 import { Button } from '@/components/button';
 import { Link } from '@/components/link';
 import { OrderMatches } from '@/components/order-matches';
-import { ChevronLeftIcon, PresentationChartBarIcon, PresentationChartLineIcon } from '@heroicons/react/16/solid';
+import { ChevronLeftIcon, PresentationChartBarIcon, PresentationChartLineIcon, LockOpenIcon, LockClosedIcon } from '@heroicons/react/16/solid';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table';
 import {
   Order,
@@ -23,15 +23,37 @@ import { formatAmount } from '@/utils/formatAmount';
 interface StatProps {
   title: string;
   value: string | number;
-  change: string;
+  subvalue: string | number;
 }
 
-function Stat({ title, value, change }: StatProps) {
+function Stat({ title, value, subvalue }: StatProps) {
+  // Determine if the subvalue is "Locked" or "Unlocked"
+  const isLocked = subvalue === 'Locked';
+  const isUnlocked = subvalue === 'Unlocked';
+
   return (
     <div>
       <Divider />
       <div className="mt-6 text-lg/6 font-medium sm:text-sm/6">{title}</div>
       <div className="mt-3 text-3xl/8 font-semibold sm:text-2xl/8">{value}</div>
+      {/* Conditional rendering for general subvalue or locked/unlocked */}
+      {subvalue && !isLocked && !isUnlocked && (
+        <div className="mt-3 text-base/6 sm:text-sm/6">
+          <span className="text-zinc-500">{subvalue}</span>
+        </div>
+      )}
+      {(isLocked || isUnlocked) && (
+        <div className="mt-3 text-base/6 sm:text-sm/6 flex items-center">
+          <Badge color={isLocked ? 'lime' : 'pink'} className="flex items-center">
+            {isLocked ? (
+              <LockClosedIcon className="w-3 h-3" />
+            ) : (
+              <LockOpenIcon className="w-3 h-3" />
+            )}
+          </Badge>
+          <span className="ml-2 text-zinc-500">{subvalue}</span>
+        </div>
+      )}
     </div>
   );
 }
@@ -182,7 +204,10 @@ export default function TradePage({ params }: TradePageParams) {
               <Heading>{market}</Heading>
             </div>
             <div className="mt-2 text-sm/6 text-zinc-500">
-              Last trade on {pairData?.last_trade.confirmed_at} <span aria-hidden="true">·</span> {pairData?.last_trade.type}
+              Last traded on {new Date(pairData?.last_trade.confirmed_at * 1000).toLocaleDateString()} <span aria-hidden="true">·</span>{' '}
+              <a href={pairData?.last_trade.link} target="_blank" rel="noopener noreferrer">
+                Counterparty Dex
+              </a>
             </div>
           </div>
         </div>
@@ -194,10 +219,21 @@ export default function TradePage({ params }: TradePageParams) {
       <div className="grid gap-8 sm:grid-cols-3">
         {pairData ? (
           <>
-            <Stat title="Last Trade" value={formatAmount(pairData.last_trade.price)} />
-            <Stat title="30d Volume" value={formatAmount(pairData.volume_30d)} />
-            <Stat title="Market Cap" value={formatAmount(pairData.market_cap)} />
-            <Stat title="Total Supply" value={formatAmount(pairData.base_asset.supply)} />
+            <Stat
+              title="Last Trade"
+              value={pairData.last_trade?.price_usd ? `$${formatAmount(pairData.last_trade.price_usd)}` : formatAmount(pairData.last_trade?.price) || 'N/A'}
+              subvalue={pairData.last_trade ? `${formatAmount(pairData.last_trade.price)} ${pairData.quote_asset.symbol}` : 'No Trades Yet'}
+            />
+            <Stat
+              title="Market Cap"
+              value={pairData.market_cap_usd ? `$${formatAmount(pairData.market_cap_usd)}` : (pairData.market_cap != null ? formatAmount(pairData.market_cap) : 'N/A')}
+              subvalue={pairData.market_cap ? `${formatAmount(pairData.market_cap)} ${pairData.quote_asset.symbol}` : 'No Trades Yet'}
+            />
+            <Stat
+              title="Total Supply"
+              value={formatAmount(pairData.base_asset.supply)}
+              subvalue={pairData.base_asset.locked ? 'Locked' : 'Not Locked'}
+            />
           </>
         ) : (
           <p>Loading data...</p> // Optional: Add a loading state or skeleton component

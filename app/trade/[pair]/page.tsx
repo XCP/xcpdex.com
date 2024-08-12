@@ -163,6 +163,25 @@ interface TradePageParams {
   };
 }
 
+interface TradingPairData {
+  last_trade?: {
+    confirmed_at: number;
+    link: string;
+    price?: number;
+    price_usd?: number;
+  };
+  market_cap?: string;
+  market_cap_usd?: string;
+  base_asset: {
+    supply: string;
+    locked: boolean;
+  };
+  quote_asset: {
+    symbol: string;
+  };
+}
+
+
 export default function TradePage({ params }: TradePageParams) {
   const tradingPair = params.pair;
   const market = tradingPair.replace('_', '/');
@@ -170,7 +189,7 @@ export default function TradePage({ params }: TradePageParams) {
   const [activeTab, setActiveTab] = useState('ohlc'); // default tab
   const [baseAsset, setBaseAsset] = useState('');
   const [quoteAsset, setQuoteAsset] = useState('');
-  const [pairData, setPairData] = useState(null);
+  const [pairData, setPairData] = useState<TradingPairData | null>(null);
 
   useEffect(() => {
     const fetchPairData = async () => {

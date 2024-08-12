@@ -94,7 +94,7 @@ export function assetsToTradingPair(order: Order, useRawAssets: boolean = false)
   }
 
   if (useRawAssets) {
-    return order.give_asset === baseSymbol ? [order.give_asset, order.get_asset] : [order.get_asset, order.give_asset];
+    return (baseSymbol === giveSymbol) ? [order.give_asset, order.get_asset] : [order.get_asset, order.give_asset];
   }
 
   return [baseSymbol, quoteSymbol];

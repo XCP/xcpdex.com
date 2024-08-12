@@ -3,7 +3,11 @@ export function formatAmount(amount: string | number): string {
   const num = typeof amount === 'string' ? parseFloat(amount) : amount;
 
   // Handle very large numbers with appropriate suffixes (K, M, B, etc.)
-  if (num >= 1_000_000_000) {
+  if (num >= 1_000_000_000_000_000) {
+    return (num / 1_000_000_000_000_000).toFixed(2) + 'Q';
+  } else if (num >= 1_000_000_000_000) {
+    return (num / 1_000_000_000_000).toFixed(2) + 'T';
+  } else if (num >= 1_000_000_000) {
     return (num / 1_000_000_000).toFixed(2) + 'B';
   } else if (num >= 1_000_000) {
     return (num / 1_000_000).toFixed(2) + 'M';

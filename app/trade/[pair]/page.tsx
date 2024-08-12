@@ -9,7 +9,7 @@ import { Badge } from '@/components/badge';
 import { Button } from '@/components/button';
 import { Link } from '@/components/link';
 import { OrderMatches } from '@/components/order-matches';
-import { ChevronLeftIcon, PresentationChartBarIcon, PresentationChartLineIcon, LockOpenIcon, LockClosedIcon } from '@heroicons/react/16/solid';
+import { ChevronLeftIcon, PresentationChartBarIcon, PresentationChartLineIcon, FireIcon, LockOpenIcon, LockClosedIcon } from '@heroicons/react/16/solid';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table';
 import {
   Order,
@@ -24,12 +24,17 @@ interface StatProps {
   title: string;
   value: string | number;
   subvalue: string | number;
+  issued?: number;
+  burned?: number;
 }
 
-function Stat({ title, value, subvalue }: StatProps) {
+function Stat({ title, value, subvalue, issued = 0, burned = 0}: StatProps) {
   // Determine if the subvalue is "Locked" or "Unlocked"
   const isLocked = subvalue === 'Locked';
   const isUnlocked = subvalue === 'Unlocked';
+
+  // Calculate the percentage burned if burned and supply are provided
+  const burnPercentage = burned && issued > 0 ? (burned / issued) * 100 : 0;
 
   return (
     <div>
@@ -52,6 +57,14 @@ function Stat({ title, value, subvalue }: StatProps) {
             )}
           </Badge>
           <span className="ml-2 text-zinc-500">{subvalue}</span>
+          {burned > 0 && (
+            <>
+              <Badge color="orange" className="flex items-center ml-4">
+                <FireIcon className="w-3 h-3 text-red-500" />
+              </Badge>
+              <span className="ml-2 text-zinc-500">{burnPercentage.toFixed(2)}% Burned</span>
+            </>
+          )}
         </div>
       )}
     </div>
@@ -274,6 +287,8 @@ export default function TradePage({ params }: TradePageParams) {
               title="Total Supply"
               value={formatAmount(pairData?.base_asset?.supply || 0)}
               subvalue={pairData?.base_asset?.locked ? 'Locked' : 'Not Locked'}
+              issued={pairData?.base_asset?.issued || 0}
+              burned={pairData?.base_asset?.burned || 0}
             />
           </>
         ) : (

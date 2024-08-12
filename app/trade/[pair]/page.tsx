@@ -19,7 +19,7 @@ import {
   calculateAmount,
   calculateTotal,
 } from '@/utils/tradingPairUtils';
-
+import { formatAmount } from '@/utils/formatAmount';
 interface StatProps {
   title: string;
   value: string | number;
@@ -194,10 +194,10 @@ export default function TradePage({ params }: TradePageParams) {
       <div className="grid gap-8 sm:grid-cols-3">
         {pairData ? (
           <>
-            <Stat title="Last Trade" value={pairData.last_trade.price} />
-            <Stat title="30d Volume" value={pairData.volume_30d} />
-            <Stat title="Market Cap" value={pairData.market_cap} />
-            <Stat title="Total Supply" value={pairData.base_asset.supply} />
+            <Stat title="Last Trade" value={formatAmount(pairData.last_trade.price)} />
+            <Stat title="30d Volume" value={formatAmount(pairData.volume_30d)} />
+            <Stat title="Market Cap" value={formatAmount(pairData.market_cap)} />
+            <Stat title="Total Supply" value={formatAmount(pairData.base_asset.supply)} />
           </>
         ) : (
           <p>Loading data...</p> // Optional: Add a loading state or skeleton component

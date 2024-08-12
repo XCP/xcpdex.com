@@ -167,8 +167,11 @@ export function Orders({ endpoint, status = 'all' }: OrdersProps) {
                       .replace('about ', '')
                       .replace('almost ', '')
                       .replace('seconds ago', 'seconds')
+                      .replace('second ago', 'second')
                       .replace('minutes ago', 'minutes')
-                      .replace('hours ago', 'hours')}
+                      .replace('minute ago', 'minute')
+                      .replace('hours ago', 'hours')
+                      .replace('hour ago', 'hour')}
                   </TableCell>
                 </TableRow>
               );

@@ -1,4 +1,4 @@
-export function formatAmount(amount: string | number, usd: boolean = false): string {
+export function formatAmount(amount: string | number, usd: boolean = false, pct: boolean = false): string {
   // Convert the amount to a number if it's a string
   const num = typeof amount === 'string' ? parseFloat(amount) : amount;
 
@@ -26,7 +26,14 @@ export function formatAmount(amount: string | number, usd: boolean = false): str
     let formattedNumber: string;
 
     // Determine precision based on the significant digit's position
-    if (significantIndex < 4 && usd) {
+    
+    if (usd) {
+      if (num < 1) {
+        formattedNumber = num.toFixed(4);
+      } else {
+        formattedNumber = num.toFixed(2);
+      }
+    } else if (pct && num > 1) {
       formattedNumber = num.toFixed(2);
     } else if (significantIndex < 4) {
       formattedNumber = num.toFixed(4);

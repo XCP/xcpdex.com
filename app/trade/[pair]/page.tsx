@@ -2,174 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { Divider } from '@/components/divider';
-import ApexChart from '@/components/apex-chart';
-import ApexAreaChart from '@/components/apex-areachart';
 import { Heading } from '@/components/heading';
-import { Badge } from '@/components/badge';
 import { Button } from '@/components/button';
 import { Link } from '@/components/link';
+import { Stat } from '@/components/stat';
+import { OrderBook } from '@/components/order-book';
 import { OrderMatches } from '@/components/order-matches';
-import { ChevronLeftIcon, PresentationChartBarIcon, PresentationChartLineIcon, FireIcon, LockOpenIcon, LockClosedIcon } from '@heroicons/react/16/solid';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table';
-import {
-  Order,
-  assetsToTradingPair,
-  getTradingDirection,
-  calculatePrice,
-  calculateAmount,
-  calculateTotal,
-} from '@/utils/tradingPairUtils';
+import ApexChart from '@/components/apex-chart';
+import ApexAreaChart from '@/components/apex-areachart';
+import { ChevronLeftIcon, PresentationChartBarIcon, PresentationChartLineIcon, CheckBadgeIcon } from '@heroicons/react/16/solid';
 import { formatAmount } from '@/utils/formatAmount';
-
-interface StatProps {
-  title: string;
-  value: string | number;
-  subvalue: string | number;
-  issued?: number;
-  burned?: number;
-}
-
-function Stat({ title, value, subvalue, issued = 0, burned = 0}: StatProps) {
-  // Determine if the subvalue is "Locked" or "Unlocked"
-  const isLocked = subvalue === 'Locked';
-  const isUnlocked = subvalue === 'Unlocked';
-
-  // Calculate the percentage burned if burned and supply are provided
-  const burnPercentage = burned && issued > 0 ? (burned / issued) * 100 : 0;
-
-  return (
-    <div>
-      <Divider />
-      <div className="mt-6 text-lg/6 font-medium sm:text-sm/6">{title}</div>
-      <div className="mt-3 text-3xl/8 font-semibold sm:text-2xl/8">{value}</div>
-      {/* Conditional rendering for general subvalue or locked/unlocked */}
-      {subvalue && !isLocked && !isUnlocked && (
-        <div className="mt-3 text-base/6 sm:text-sm/6">
-          <span className="text-zinc-500">{subvalue}</span>
-        </div>
-      )}
-      {(isLocked || isUnlocked) && (
-        <div className="mt-3 text-base/6 sm:text-sm/6 flex items-center">
-          <Badge color={isLocked ? 'lime' : 'pink'} className="flex items-center">
-            {isLocked ? (
-              <LockClosedIcon className="w-3 h-3" />
-            ) : (
-              <LockOpenIcon className="w-3 h-3" />
-            )}
-          </Badge>
-          <span className="ml-2 text-zinc-500">{subvalue}</span>
-          {burned > 0 && (
-            <>
-              <Badge color="orange" className="flex items-center ml-4">
-                <FireIcon className="w-3 h-3 text-red-500" />
-              </Badge>
-              <span className="ml-2 text-zinc-500">{formatAmount(burnPercentage)}% Burned</span>
-            </>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-interface OrderBookProps {
-  market: string;
-  side: string;
-  setBaseAsset: (asset: string) => void;
-  setQuoteAsset: (asset: string) => void;
-}
-
-function OrderBook({ market, side, setBaseAsset, setQuoteAsset }: OrderBookProps) {
-  const [orders, setOrders] = useState<Order[]>([]);
-
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        // First attempt to fetch open orders
-        const response = await fetch(`https://api.counterparty.info/v2/orders/${market}?status=open&verbose=true`);
-        const json = await response.json();
-    
-        // If there are open orders, determine the base and quote assets from the first order
-        if (json.result.length > 0) {
-          const firstOrder = json.result[0];
-          const [base, quote] = assetsToTradingPair(firstOrder);
-          setBaseAsset(base);
-          setQuoteAsset(quote);
-        } else {
-          // If no open orders, fetch any order with limit 1 to determine the assets
-          const fallbackResponse = await fetch(`https://api.counterparty.info/v2/orders/${market}?status=all&limit=1&verbose=true`);
-          const fallbackJson = await fallbackResponse.json();
-          
-          if (fallbackJson.result.length > 0) {
-            const firstOrder = fallbackJson.result[0];
-            const [base, quote] = assetsToTradingPair(firstOrder);
-            setBaseAsset(base);
-            setQuoteAsset(quote);
-          } else {
-            console.error('No orders found for the market.');
-          }
-        }
-      } catch (error) {
-        console.error('Failed to fetch orders:', error);
-      }
-    };    
-
-    fetchOrders();
-  }, [market, side, setBaseAsset, setQuoteAsset]);
-
-  const baseSubtotal = (index: number) => {
-    return orders.slice(0, index + 1).reduce((sum, order) => sum + parseFloat(order.give_remaining_normalized), 0).toFixed(8);
-  };
-
-  const quoteSubtotal = (index: number) => {
-    return orders.slice(0, index + 1).reduce((sum, order) => sum + parseFloat(order.get_remaining_normalized), 0).toFixed(8);
-  };
-
-  return (
-    <div>
-      <Table className="table-responsive order-book">
-        <TableHead>
-          <TableRow>
-            <TableHeader>Price</TableHeader>
-            <TableHeader>{orders.length > 0 ? orders[0].give_remaining_normalized : 'Base Asset'}</TableHeader>
-            <TableHeader>{orders.length > 0 ? orders[0].get_remaining_normalized : 'Quote Asset'}</TableHeader>
-            <TableHeader>Sum&nbsp;({orders.length > 0 ? orders[0].get_remaining_normalized : 'Quote Asset'})</TableHeader>
-            <TableHeader>Source</TableHeader>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {orders.length > 0 ? orders.map((order, index) => (
-            <TableRow key={order.tx_index}>
-              <TableCell className={`text-right ${side === 'buy' ? 'text-success' : 'text-danger'}`} title={`${calculatePrice(order)} ${orders[0].get_remaining_normalized}`}>
-                {calculatePrice(order)}
-              </TableCell>
-              <TableCell className="text-right">{calculateAmount(order)}</TableCell>
-              <TableCell className="text-right">{calculateTotal(order)}</TableCell>
-              <TableCell className="text-right" title={`${baseSubtotal(index)} ${orders[0].give_remaining_normalized}`}>
-                {quoteSubtotal(index)}
-              </TableCell>
-              <TableCell>
-                <a href={`https://xcpdex.com/address/${order.source}`}>{order.source}</a>
-              </TableCell>
-            </TableRow>
-          )) : (
-            <TableRow>
-              <TableCell className="text-center" colSpan={5}>No {side} orders found.</TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-      <div className="row mt-1 text-muted">
-        <div className="col">
-          {baseSubtotal(orders.length)} {orders.length > 0 ? orders[0].give_remaining_normalized : 'Base Asset'}
-        </div>
-        <div className="col text-right">
-          {quoteSubtotal(orders.length)} {orders.length > 0 ? orders[0].get_remaining_normalized : 'Quote Asset'}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 interface TradePageParams {
   params: {
@@ -200,8 +42,8 @@ interface TradingPairData {
 export default function TradePage({ params }: TradePageParams) {
   const tradingPair = params.pair;
   const market = tradingPair.replace('_', '/');
-  const [activeInterval, setActiveInterval] = useState('1m'); // default interval
-  const [activeTab, setActiveTab] = useState('ohlc'); // default tab
+  const [activeInterval, setActiveInterval] = useState('1m');
+  const [activeTab, setActiveTab] = useState('ohlc');
   const [baseAsset, setBaseAsset] = useState('');
   const [quoteAsset, setQuoteAsset] = useState('');
   const [pairData, setPairData] = useState<TradingPairData | null>(null);
@@ -229,19 +71,20 @@ export default function TradePage({ params }: TradePageParams) {
         </Link>
       </div>
       <div className="mt-4 mb-8 flex flex-wrap items-end justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-6">
+        <div className="flex sm:flex-wrap items-center gap-6">
           <div className="w-20 shrink-0">
             <img className="w-20 aspect-square rounded-lg shadow" src={`https://api.xcp.io/img/full/${baseAsset}`} alt={tradingPair} />
           </div>
           <div>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
               <Heading>{market}</Heading>
+              <CheckBadgeIcon className="size-5 text-blue-500"/>
             </div>
             {pairData?.last_trade && (
               <div className="mt-2 text-sm/6 text-zinc-500">
                 Last traded on {new Date(pairData.last_trade.confirmed_at * 1000).toLocaleDateString()} <span aria-hidden="true">·</span>{' '}
                 <a href={pairData.last_trade.link} target="_blank" rel="noopener noreferrer">
-                  Counterparty Dex
+                  Counterparty
                 </a>
               </div>
             )}
@@ -252,7 +95,7 @@ export default function TradePage({ params }: TradePageParams) {
           <Button href="#">Trade</Button>
         </div>
       </div>
-      <div className="grid gap-8 sm:grid-cols-3">
+      <div className="grid gap-6 sm:gap-8 grid-cols-3">
         {pairData ? (
           <>
             <Stat
@@ -294,7 +137,7 @@ export default function TradePage({ params }: TradePageParams) {
             />
           </>
         ) : (
-          <p>Loading data...</p> // Optional: Add a loading state or skeleton component
+          <p>Loading data...</p>
         )}
       </div>
       <div className="mt-8 flex justify-between items-center">

@@ -32,10 +32,6 @@ function Stat({ title, value, change }: StatProps) {
       <Divider />
       <div className="mt-6 text-lg/6 font-medium sm:text-sm/6">{title}</div>
       <div className="mt-3 text-3xl/8 font-semibold sm:text-2xl/8">{value}</div>
-      <div className="mt-3 text-sm/6 sm:text-xs/6">
-        <Badge color={change.startsWith('+') ? 'lime' : 'pink'}>{change}</Badge>{' '}
-        <span className="text-zinc-500">from last week</span>
-      </div>
     </div>
   );
 }
@@ -152,18 +148,21 @@ export default function TradePage({ params }: TradePageParams) {
   const [activeTab, setActiveTab] = useState('ohlc'); // default tab
   const [baseAsset, setBaseAsset] = useState('');
   const [quoteAsset, setQuoteAsset] = useState('');
+  const [pairData, setPairData] = useState(null);
 
-  // Placeholder data for demonstration purposes
-  const pairData = {
-    status: 'Active',
-    lastTrade: '2024-08-10',
-    volume24h: '1000',
-    priceChange: '+2%',
-    totalVolume: '50000',
-    totalRevenue: '$1,000,000',
-    pageViews: '1500',
-    location: 'Exchange XYZ',
-  };
+  useEffect(() => {
+    const fetchPairData = async () => {
+      try {
+        const response = await fetch(`https://api.xcp.io/api/v1/trading-pair/${tradingPair}`);
+        const json = await response.json();
+        setPairData(json.data);
+      } catch (error) {
+        console.error('Failed to fetch trading pair data:', error);
+      }
+    };
+
+    fetchPairData();
+  }, [tradingPair]);
 
   return (
     <>
@@ -181,10 +180,9 @@ export default function TradePage({ params }: TradePageParams) {
           <div>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
               <Heading>{market}</Heading>
-              <Badge color={pairData.status === 'Active' ? 'lime' : 'zinc'}>{pairData.status}</Badge>
             </div>
             <div className="mt-2 text-sm/6 text-zinc-500">
-              Last trade on {pairData.lastTrade} <span aria-hidden="true">·</span> {pairData.location}
+              Last trade on {pairData?.last_trade.confirmed_at} <span aria-hidden="true">·</span> {pairData?.last_trade.type}
             </div>
           </div>
         </div>
@@ -194,9 +192,16 @@ export default function TradePage({ params }: TradePageParams) {
         </div>
       </div>
       <div className="grid gap-8 sm:grid-cols-3">
-        <Stat title="24h Volume" value={pairData.volume24h} change={pairData.priceChange} />
-        <Stat title="Total Volume" value={pairData.totalVolume} change={pairData.priceChange} />
-        <Stat title="Pageviews" value={pairData.pageViews} change={pairData.priceChange} />
+        {pairData ? (
+          <>
+            <Stat title="Last Trade" value={pairData.last_trade.price} />
+            <Stat title="30d Volume" value={pairData.volume_30d} />
+            <Stat title="Market Cap" value={pairData.market_cap} />
+            <Stat title="Total Supply" value={pairData.base_asset.supply} />
+          </>
+        ) : (
+          <p>Loading data...</p> // Optional: Add a loading state or skeleton component
+        )}
       </div>
       <div className="mt-8 flex justify-between items-center">
         <div className="flex space-x-2 lg:space-x-4">

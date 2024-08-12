@@ -15,8 +15,8 @@ export default function AddressOrdersPage({ params }: { params: { address: strin
       <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-4">
         <div className="w-full lg:w-auto">
           <Heading className="lg:hidden">Address</Heading>
-          <Heading className="hidden lg:block">{address}</Heading>
-          <div className="mt-2 text-sm text-zinc-500 lg:hidden">
+          <Heading className="hidden lg:block no-ligatures">{address}</Heading>
+          <div className="mt-2 text-sm text-zinc-500 lg:hidden no-ligatures">
             {address}
           </div>
         </div>

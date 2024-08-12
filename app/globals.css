@@ -30,6 +30,10 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+
+  .no-ligatures {
+    font-variant-ligatures: none;
+  }
 }
 
 .chart-container {

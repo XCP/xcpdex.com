@@ -67,7 +67,7 @@ export function OrderMatches({ market }: OrderMatchesProps) {
             {matches.length > 0 ? (
               matches.map((match) => {
                 // Creating an order-like object to use with utility functions
-                const orderLike: Order = {
+                const orderLike = {
                   tx_index: match.tx0_index,
                   tx_hash: match.tx0_hash,
                   block_index: match.tx0_block_index,

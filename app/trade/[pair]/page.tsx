@@ -162,7 +162,7 @@ export default function TradePage({ params }: TradePageParams) {
       {pairData?.other_markets && pairData.other_markets.length > 0 && (
         <OtherMarkets markets={pairData.other_markets} />
       )}
-      <div className={`flex justify-between items-center ${pairData?.other_markets.length > 3 ? 'mt-3' : 'mt-8'}`}>
+      <div className={`flex justify-between items-center ${pairData?.other_markets && pairData.other_markets.length > 3 ? 'mt-3' : 'mt-8'}`}>
         <div className="flex space-x-2 lg:space-x-4">
           {['1d', '1w', '1m', '1y'].map(interval => (
             <button

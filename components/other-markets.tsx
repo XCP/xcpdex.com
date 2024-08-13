@@ -1,9 +1,10 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Avatar } from '@/components/avatar';
-import { Table, TableHead, TableRow, TableHeader, TableBody, TableCell } from '@/components/table'; // Adjust the import based on your project's structure
+import { Table, TableHead, TableRow, TableHeader, TableBody, TableCell } from '@/components/table';
 import { formatAmount } from '@/utils/formatAmount';
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/16/solid';
 
 interface OtherMarket {
   name: string;
@@ -27,6 +28,14 @@ interface OtherMarketsProps {
 }
 
 const OtherMarkets: React.FC<OtherMarketsProps> = ({ markets }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  const displayedMarkets = isExpanded ? markets : markets.slice(0, 3);
+
   return (
     <div className="mt-8">
       <Table className="[--gutter:theme(spacing.6)] lg:[--gutter:theme(spacing.10)]">
@@ -40,14 +49,14 @@ const OtherMarkets: React.FC<OtherMarketsProps> = ({ markets }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {markets.length === 0 ? (
+          {displayedMarkets.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={4} className="text-center text-zinc-500 py-24">
+              <TableCell colSpan={5} className="text-center text-zinc-500 py-24">
                 No other markets available.
               </TableCell>
             </TableRow>
           ) : (
-            markets.map((market) => (
+            displayedMarkets.map((market) => (
               <TableRow key={market.slug} href={`/trade/${market.slug}`} title={market.name}>
                 <TableCell>
                   <div className="flex items-center gap-2">
@@ -68,6 +77,25 @@ const OtherMarkets: React.FC<OtherMarketsProps> = ({ markets }) => {
           )}
         </TableBody>
       </Table>
+      
+      {markets.length > 3 && (
+        <div className="flex justify-center">
+          <button
+            className="flex items-center justify-center px-10 rounded-b text-zinc-500 hover:text-zinc-950 border border-t-0 hover:bg-zinc-950/5 hover:border-b-zinc-950/10 border-zinc-950/10"
+            onClick={toggleExpand}
+          >
+            {isExpanded ? (
+              <>
+                <ChevronUpIcon className="size-5" />
+              </>
+            ) : (
+              <>
+                <ChevronDownIcon className="size-5" />
+              </>
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

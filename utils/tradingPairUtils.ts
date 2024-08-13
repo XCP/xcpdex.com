@@ -10,6 +10,9 @@ export interface AssetInfo {
 
 export interface Order {
   tx_index: number;
+  tx_hash: string;
+  block_index: number;
+  source: string;
   give_asset: string;
   give_quantity: number;
   give_remaining: number;
@@ -48,6 +51,8 @@ export interface OrderMatch {
   backward_quantity_normalized: string;
   block_time: number;
   tx0_address: string;
+  tx0_hash: string;
+  tx0_index: number;
   tx1_address: string;
   forward_asset_info: AssetInfo;
   backward_asset_info: AssetInfo;

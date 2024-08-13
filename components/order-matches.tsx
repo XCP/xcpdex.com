@@ -68,7 +68,9 @@ export function OrderMatches({ market }: OrderMatchesProps) {
               matches.map((match) => {
                 // Creating an order-like object to use with utility functions
                 const orderLike = {
-                  tx_index: match.id,
+                  tx_index: match.tx0_index,
+                  source: match.tx0_address,
+                  tx_hash: match.tx0_hash,
                   give_asset: match.forward_asset,
                   give_asset_info: match.forward_asset_info,
                   give_quantity_normalized: match.forward_quantity_normalized,

@@ -15,7 +15,7 @@ interface OtherMarket {
     market_cap_usd?: string;
     volume?: string;
     link: string;
-    confirmed_at: string;
+    confirmed_at: number;
   };
   quote_asset: {
     symbol: string;
@@ -58,7 +58,11 @@ const OtherMarkets: React.FC<OtherMarketsProps> = ({ markets }) => {
                 <TableCell>{market.last_trade?.price ? `${formatAmount(market.last_trade.price)} ${market.quote_asset.symbol}` : 'N/A'}</TableCell>
                 <TableCell>{market.last_trade?.price_usd ? `$${formatAmount(market.last_trade.price_usd, true)}` : 'N/A'}</TableCell>
                 <TableCell>{market.last_trade?.market_cap_usd ? `$${formatAmount(market.last_trade.market_cap_usd, true)}` : 'N/A'}</TableCell>
-                <TableCell className="text-right">{market.last_trade?.confirmed_at ? `${new Date(market.last_trade.confirmed_at * 1000).toLocaleDateString()}` : 'N/A'}</TableCell>
+                <TableCell className="text-right">
+                  {market.last_trade?.confirmed_at 
+                    ? `${new Date(Number(market.last_trade.confirmed_at) * 1000).toLocaleDateString()}` 
+                    : 'N/A'}
+                </TableCell>
               </TableRow>
             ))
           )}

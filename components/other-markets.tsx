@@ -32,11 +32,11 @@ const OtherMarkets: React.FC<OtherMarketsProps> = ({ markets }) => {
       <Table className="[--gutter:theme(spacing.6)] lg:[--gutter:theme(spacing.10)]">
         <TableHead>
           <TableRow>
-            <TableHeader>Market</TableHeader>
-            <TableHeader>Last Price</TableHeader>
-            <TableHeader>Last Price</TableHeader>
+            <TableHeader>Markets</TableHeader>
+            <TableHeader>Market Ratio</TableHeader>
+            <TableHeader>Price</TableHeader>
             <TableHeader>Market Cap</TableHeader>
-            <TableHeader className="text-right">Last Traded</TableHeader>
+            <TableHeader className="text-right">Last Trade</TableHeader>
           </TableRow>
         </TableHead>
         <TableBody>

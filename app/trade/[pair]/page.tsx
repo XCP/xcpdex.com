@@ -62,7 +62,7 @@ export default function TradePage({ params }: TradePageParams) {
   const tradingPair = params.pair;
   const market = tradingPair.replace('_', '/');
   const [activeInterval, setActiveInterval] = useState('1m');
-  const [activeTab, setActiveTab] = useState('ohlc');
+  const [activeTab, setActiveTab] = useState('area');
   const [baseAsset, setBaseAsset] = useState('');
   const [quoteAsset, setQuoteAsset] = useState('');
   const [pairData, setPairData] = useState<TradingPairData | null>(null);

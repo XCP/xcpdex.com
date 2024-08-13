@@ -66,7 +66,7 @@ const OtherMarkets: React.FC<OtherMarketsProps> = ({ markets }) => {
                 </TableCell>
                 <TableCell>{market.last_trade?.price ? `${formatAmount(market.last_trade.price)} ${market.quote_asset.symbol}` : 'N/A'}</TableCell>
                 <TableCell>{market.last_trade?.price_usd ? `$${formatAmount(market.last_trade.price_usd, true)}` : 'N/A'}</TableCell>
-                <TableCell>{market.last_trade?.market_cap_usd ? `$${formatAmount(market.last_trade.market_cap_usd, true)}` : 'N/A'}</TableCell>
+                <TableCell>{market.market_cap_usd ? `$${formatAmount(market.market_cap_usd, true)}` : 'N/A'}</TableCell>
                 <TableCell className="text-right">
                   {market.last_trade?.confirmed_at 
                     ? `${new Date(Number(market.last_trade.confirmed_at) * 1000).toLocaleDateString()}` 

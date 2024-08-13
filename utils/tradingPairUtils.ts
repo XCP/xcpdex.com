@@ -9,10 +9,6 @@ export interface AssetInfo {
 }
 
 export interface Order {
-  tx_index: number;
-  tx_hash: string;
-  block_index: number;
-  source: string;
   give_asset: string;
   give_quantity: number;
   give_remaining: number;

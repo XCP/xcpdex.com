@@ -39,7 +39,7 @@ async function fetchAssetBalances(asset: string): Promise<{ balances: Balance[],
 }
 
 interface AssetBalancesProps {
-  asset: string | undefined;
+  asset: string;
   supply: number;
   setHoldersCount: (count: number) => void;
 }

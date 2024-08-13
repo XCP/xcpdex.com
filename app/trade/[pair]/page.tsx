@@ -229,7 +229,7 @@ export default function TradePage({ params }: TradePageParams) {
       <Divider />
       <div className="mt-8">
         {activeTable === 'trades' && <OrderMatches market={market} />}
-        {activeTable === 'holders' && <AssetBalances asset={pairData?.base_asset?.asset} supply={pairData?.base_asset?.supply} setHoldersCount={setHoldersCount} />}
+        {activeTable === 'holders' && <AssetBalances asset={pairData?.base_asset?.asset} supply={pairData?.base_asset?.supply || 0} setHoldersCount={setHoldersCount} />}
       </div>
     </>
   );

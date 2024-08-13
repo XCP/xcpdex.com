@@ -33,7 +33,7 @@ const OtherMarkets: React.FC<OtherMarketsProps> = ({ markets }) => {
         <TableHead>
           <TableRow>
             <TableHeader>Markets</TableHeader>
-            <TableHeader>Market Ratio</TableHeader>
+            <TableHeader>Ratio</TableHeader>
             <TableHeader>Price</TableHeader>
             <TableHeader>Market Cap</TableHeader>
             <TableHeader className="text-right">Last Trade</TableHeader>

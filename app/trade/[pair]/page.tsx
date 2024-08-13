@@ -51,7 +51,7 @@ interface OtherMarket {
     market_cap_usd?: string;
     volume?: string;
     link: string;
-    confirmed_at: string;
+    confirmed_at: number;
   };
   quote_asset: {
     symbol: string;

@@ -9,6 +9,7 @@ export interface AssetInfo {
 }
 
 export interface Order {
+  tx_index: number;
   give_asset: string;
   give_quantity: number;
   give_remaining: number;

@@ -22,7 +22,7 @@ interface Balance {
   asset: string;
   quantity: number;
   asset_info: AssetInfo;
-  quantity_normalized: string;
+  quantity_normalized: any;
 }
 
 // Define the response structure

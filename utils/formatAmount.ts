@@ -28,8 +28,10 @@ export function formatAmount(amount: string | number, usd: boolean = false, pct:
     // Determine precision based on the significant digit's position
     
     if (usd) {
-      if (num < 1) {
-        formattedNumber = num.toFixed(4);
+      if (num < 1 && significantIndex < 4) {
+        formattedNumber = num.toPrecision(4);
+      } else if (num < 1) {
+        formattedNumber = num.toPrecision(2);
       } else {
         formattedNumber = num.toFixed(2);
       }

@@ -21,14 +21,14 @@ interface TradePageParams {
 }
 
 interface TradingPairData {
+  market_cap?: string;
+  market_cap_usd?: string;
   last_trade?: {
     confirmed_at: number;
     link: string;
     price?: number;
     price_usd?: number;
   };
-  market_cap?: string;
-  market_cap_usd?: string;
   base_asset: {
     supply: string;
     locked: boolean;

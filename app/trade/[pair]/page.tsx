@@ -44,11 +44,11 @@ interface TradingPairData {
 interface OtherMarket {
   name: string;
   slug: string;
+  market_cap?: string;
+  market_cap_usd?: string;
   last_trade?: {
     price?: string;
     price_usd?: string;
-    market_cap?: string;
-    market_cap_usd?: string;
     volume?: string;
     link: string;
     confirmed_at: number;

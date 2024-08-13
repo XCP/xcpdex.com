@@ -39,7 +39,7 @@ async function fetchAssetBalances(asset: string): Promise<{ balances: Balance[],
 }
 
 interface AssetBalancesProps {
-  asset: string;
+  asset: string | undefined;
   supply: number;
   setHoldersCount: (count: number) => void;
 }
@@ -176,15 +176,17 @@ export function AssetBalances({ asset, supply, setHoldersCount }: AssetBalancesP
 
   useEffect(() => {
     async function loadBalances() {
-      setLoading(true);
-      const { balances, count } = await fetchAssetBalances(asset);
-      setBalances(balances);
-      setResultCount(count);
-      setHoldersCount(count);
-      setLoading(false);
+      if (asset) {
+        setLoading(true);
+        const { balances, count } = await fetchAssetBalances(asset);
+        setBalances(balances);
+        setResultCount(count);
+        setHoldersCount(count);
+        setLoading(false);
+      }
     }
     loadBalances();
-  }, [asset]);
+  }, [asset, setHoldersCount]);
 
   // Function to determine if an address is a burn address
   const isBurnAddress = (address: string): boolean => {

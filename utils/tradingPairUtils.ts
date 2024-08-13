@@ -21,10 +21,6 @@ export interface Order {
   get_remaining: number;
   expiration: number;
   expire_index: number;
-  fee_required: number;
-  fee_required_remaining: number;
-  fee_provided: number;
-  fee_provided_remaining: number;
   status: string;
   confirmed: boolean;
   block_time: number;
@@ -34,10 +30,6 @@ export interface Order {
   get_quantity_normalized: string;
   get_remaining_normalized: string;
   give_remaining_normalized: string;
-  fee_provided_normalized: string;
-  fee_required_normalized: string;
-  fee_required_remaining_normalized: string;
-  fee_provided_remaining_normalized: string;
 }
 
 export interface OrderMatch {
@@ -53,6 +45,13 @@ export interface OrderMatch {
   tx0_address: string;
   tx0_hash: string;
   tx0_index: number;
+  tx0_block_index: number;
+  forward_quantity: number;
+  backward_quantity: number;
+  tx0_expiration: number;
+  match_expire_index: number;
+  status: string;
+  confirmed: boolean;
   tx1_address: string;
   forward_asset_info: AssetInfo;
   backward_asset_info: AssetInfo;

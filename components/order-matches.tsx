@@ -67,18 +67,29 @@ export function OrderMatches({ market }: OrderMatchesProps) {
             {matches.length > 0 ? (
               matches.map((match) => {
                 // Creating an order-like object to use with utility functions
-                const orderLike = {
+                const orderLike: Order = {
                   tx_index: match.tx0_index,
-                  source: match.tx0_address,
                   tx_hash: match.tx0_hash,
+                  block_index: match.tx0_block_index,
+                  source: match.tx0_address,
                   give_asset: match.forward_asset,
-                  give_asset_info: match.forward_asset_info,
-                  give_quantity_normalized: match.forward_quantity_normalized,
+                  give_quantity: match.forward_quantity,
+                  give_remaining: 0,
                   get_asset: match.backward_asset,
+                  get_quantity: match.backward_quantity,
+                  get_remaining: 0,
+                  expiration: match.tx0_expiration,
+                  expire_index: match.match_expire_index,
+                  status: match.status,
+                  confirmed: match.confirmed,
+                  block_time: match.block_time,
+                  give_asset_info: match.forward_asset_info,
                   get_asset_info: match.backward_asset_info,
+                  give_quantity_normalized: match.forward_quantity_normalized,
                   get_quantity_normalized: match.backward_quantity_normalized,
-                  ...match // Spread the rest of the match object properties
-                };
+                  get_remaining_normalized: '0', // Assuming 0 as a placeholder
+                  give_remaining_normalized: '0', // Assuming 0 as a placeholder
+                };                
 
                 const direction = getTradingDirection(orderLike);
 

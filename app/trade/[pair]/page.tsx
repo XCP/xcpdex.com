@@ -8,6 +8,7 @@ import { Link } from '@/components/link';
 import { Stat } from '@/components/stat';
 import { OrderBook } from '@/components/order-book';
 import { OrderMatches } from '@/components/order-matches';
+import OtherMarkets from '@/components/other-markets';
 import ApexChart from '@/components/apex-chart';
 import ApexAreaChart from '@/components/apex-areachart';
 import { ChevronLeftIcon, PresentationChartBarIcon, PresentationChartLineIcon, CheckBadgeIcon } from '@heroicons/react/16/solid';
@@ -140,6 +141,9 @@ export default function TradePage({ params }: TradePageParams) {
           <p>Loading data...</p>
         )}
       </div>
+      {pairData?.other_markets && pairData.other_markets.length > 0 && (
+        <OtherMarkets markets={pairData.other_markets} />
+      )}
       <div className="mt-8 flex justify-between items-center">
         <div className="flex space-x-2 lg:space-x-4">
           {['1d', '1w', '1m', '1y'].map(interval => (

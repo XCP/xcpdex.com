@@ -40,6 +40,22 @@ export interface Order {
   fee_provided_remaining_normalized: string;
 }
 
+export interface OrderMatch {
+  id: string;
+  market_pair: string;
+  market_dir: string;
+  market_price: string;
+  forward_asset: string;
+  forward_quantity_normalized: string;
+  backward_asset: string;
+  backward_quantity_normalized: string;
+  block_time: number;
+  tx0_address: string;
+  tx1_address: string;
+  forward_asset_info: AssetInfo;
+  backward_asset_info: AssetInfo;
+}
+
 const quoteAssets: string[] = [
   'BTC', 'XCP', 'XBTC', 'FLDC', 'SJCX', 'BITCRYSTALS', 'LTBCOIN', 'SCOTCOIN',
   'PEPECASH', 'BITCORN', 'CORNFUTURES', 'NEWBITCORN', 'DATABITS', 'MAFIACASH',

@@ -11,13 +11,11 @@ interface OtherMarket {
   slug: string;
   market_cap?: string;
   market_cap_usd?: string;
-  last_trade?: {
-    price?: string;
-    price_usd?: string;
-    volume?: string;
-    link: string;
-    confirmed_at: number;
-  };
+  last_trade_type?: string;
+  last_trade_link?: string;
+  last_trade_price?: number;
+  last_trade_price_usd?: number;
+  last_trade_date?: number;
   quote_asset: {
     symbol: string;
   };
@@ -64,12 +62,12 @@ const OtherMarkets: React.FC<OtherMarketsProps> = ({ markets }) => {
                     <span className="font-medium">{market.name}</span>
                   </div>
                 </TableCell>
-                <TableCell>{market.last_trade?.price ? `${formatAmount(market.last_trade.price)} ${market.quote_asset.symbol}` : 'N/A'}</TableCell>
-                <TableCell>{market.last_trade?.price_usd ? `$${formatAmount(market.last_trade.price_usd, true)}` : 'N/A'}</TableCell>
+                <TableCell>{market.last_trade_price ? `${formatAmount(market.last_trade_price)} ${market.quote_asset.symbol}` : 'N/A'}</TableCell>
+                <TableCell>{market.last_trade_price_usd ? `$${formatAmount(market.last_trade_price_usd, true)}` : 'N/A'}</TableCell>
                 <TableCell>{market.market_cap_usd ? `$${formatAmount(market.market_cap_usd, true)}` : 'N/A'}</TableCell>
                 <TableCell className="text-right">
-                  {market.last_trade?.confirmed_at 
-                    ? `${new Date(Number(market.last_trade.confirmed_at) * 1000).toLocaleDateString()}` 
+                  {market.last_trade_date
+                    ? `${new Date(Number(market.last_trade_date) * 1000).toLocaleDateString()}` 
                     : 'N/A'}
                 </TableCell>
               </TableRow>

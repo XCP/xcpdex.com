@@ -1,4 +1,8 @@
 export function formatAmount(amount: string | number, usd: boolean = false, pct: boolean = false): string {
+  if (amount === null || amount === undefined) {
+    return 'N/A';
+  }
+
   // Convert the amount to a number if it's a string
   const num = typeof amount === 'string' ? parseFloat(amount) : amount;
 

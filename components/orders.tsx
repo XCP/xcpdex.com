@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Avatar } from '@/components/avatar';
 import { Badge } from '@/components/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table';
-import { formatDistanceToNow } from 'date-fns';
+import { formatTimeAgo } from '@/utils/formatTimeAgo';
 import { Order, getTradingDirection, getBaseAssetString, getTradingPairString, calculatePrice, calculateAmount } from '@/utils/tradingPairUtils';
 import { ArrowPathIcon } from '@heroicons/react/16/solid';
 import {
@@ -162,16 +162,7 @@ export function Orders({ endpoint, status = 'all' }: OrdersProps) {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-zinc-500 text-right">
-                    {formatDistanceToNow(new Date(order.block_time * 1000), { addSuffix: true })
-                      .replace('over ', '')
-                      .replace('about ', '')
-                      .replace('almost ', '')
-                      .replace('seconds ago', 'seconds')
-                      .replace('second ago', 'second')
-                      .replace('minutes ago', 'minutes')
-                      .replace('minute ago', 'minute')
-                      .replace('hours ago', 'hours')
-                      .replace('hour ago', 'hour')}
+                    {formatTimeAgo(order.block_time)}
                   </TableCell>
                 </TableRow>
               );

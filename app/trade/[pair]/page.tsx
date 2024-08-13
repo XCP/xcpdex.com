@@ -11,7 +11,9 @@ import { OrderMatches } from '@/components/order-matches';
 import OtherMarkets from '@/components/other-markets';
 import ApexChart from '@/components/apex-chart';
 import ApexAreaChart from '@/components/apex-areachart';
+import AssetBalances from '@/components/asset-balances';
 import { ChevronLeftIcon, PresentationChartBarIcon, PresentationChartLineIcon, CheckBadgeIcon } from '@heroicons/react/16/solid';
+import { Navbar, NavbarItem, NavbarSection } from '@/components/navbar';
 import { formatAmount } from '@/utils/formatAmount';
 
 interface TradePageParams {
@@ -23,17 +25,17 @@ interface TradePageParams {
 interface TradingPairData {
   market_cap?: string;
   market_cap_usd?: string;
-  last_trade?: {
-    confirmed_at: number;
-    link: string;
-    price?: number;
-    price_usd?: number;
-  };
+  last_trade_type?: string;
+  last_trade_link?: string;
+  last_trade_price?: number;
+  last_trade_price_usd?: number;
+  last_trade_date?: number;
   base_asset: {
-    supply: string;
-    locked: boolean;
+    asset: string;
+    supply: number;
     issued?: number;
     burned?: number;
+    locked: boolean;
   };
   quote_asset: {
     symbol: string;
@@ -46,13 +48,11 @@ interface OtherMarket {
   slug: string;
   market_cap?: string;
   market_cap_usd?: string;
-  last_trade?: {
-    price?: string;
-    price_usd?: string;
-    volume?: string;
-    link: string;
-    confirmed_at: number;
-  };
+  last_trade_type?: string;
+  last_trade_link?: string;
+  last_trade_price?: number;
+  last_trade_price_usd?: number;
+  last_trade_date?: number;
   quote_asset: {
     symbol: string;
   };
@@ -63,9 +63,11 @@ export default function TradePage({ params }: TradePageParams) {
   const market = tradingPair.replace('_', '/');
   const [activeInterval, setActiveInterval] = useState('1m');
   const [activeTab, setActiveTab] = useState('area');
+  const [activeTable, setActiveTable] = useState('trades');
   const [baseAsset, setBaseAsset] = useState('');
   const [quoteAsset, setQuoteAsset] = useState('');
   const [pairData, setPairData] = useState<TradingPairData | null>(null);
+  const [holdersCount, setHoldersCount] = useState<number>(0);
 
   useEffect(() => {
     const fetchPairData = async () => {
@@ -99,10 +101,10 @@ export default function TradePage({ params }: TradePageParams) {
               <Heading>{market}</Heading>
               <CheckBadgeIcon className="size-5 text-blue-500"/>
             </div>
-            {pairData?.last_trade && (
+            {pairData?.last_trade_date && (
               <div className="mt-2 text-sm/6 text-zinc-500">
-                Last traded on {new Date(pairData.last_trade.confirmed_at * 1000).toLocaleDateString()} <span aria-hidden="true">·</span>{' '}
-                <a href={pairData.last_trade.link} target="_blank" rel="noopener noreferrer">
+                Last traded on {new Date(pairData.last_trade_date * 1000).toLocaleDateString()} <span aria-hidden="true">·</span>{' '}
+                <a href={pairData.last_trade_link} target="_blank" rel="noopener noreferrer">
                   Counterparty
                 </a>
               </div>
@@ -120,15 +122,15 @@ export default function TradePage({ params }: TradePageParams) {
             <Stat
               title="Last Price"
               value={
-                pairData?.last_trade?.price_usd !== undefined
-                  ? `$${formatAmount(pairData.last_trade.price_usd, true)}`
-                  : pairData?.last_trade?.price !== undefined
-                    ? formatAmount(pairData.last_trade.price)
+                pairData?.last_trade_price_usd !== undefined
+                  ? `$${formatAmount(pairData.last_trade_price_usd, true)}`
+                  : pairData?.last_trade_price !== undefined
+                    ? formatAmount(pairData.last_trade_price)
                     : 'N/A'
               }
               subvalue={
-                pairData?.last_trade
-                  ? `${formatAmount(pairData.last_trade.price || 0)} ${pairData.quote_asset.symbol}`
+                pairData.last_trade_date
+                  ? `${formatAmount(pairData.last_trade_price || 0)} ${pairData.quote_asset.symbol}`
                   : 'No Trades Yet'
               }
             />
@@ -206,7 +208,29 @@ export default function TradePage({ params }: TradePageParams) {
         </div>
       </div>
       <Divider />
-      <OrderMatches market={market} />
+      <Navbar className="mt-8">
+        <NavbarSection>
+          <NavbarItem
+            as="button"
+            onClick={() => setActiveTable('trades')}
+            current={activeTable === 'trades'}
+          >
+            Trades
+          </NavbarItem>
+          <NavbarItem
+            as="button"
+            onClick={() => setActiveTable('holders')}
+            current={activeTable === 'holders'}
+          >
+            Holders {holdersCount > 0 && `(${holdersCount})`}
+          </NavbarItem>
+        </NavbarSection>
+      </Navbar>
+      <Divider />
+      <div className="mt-8">
+        {activeTable === 'trades' && <OrderMatches market={market} />}
+        {activeTable === 'holders' && <AssetBalances asset={pairData?.base_asset?.asset} supply={pairData?.base_asset?.supply} setHoldersCount={setHoldersCount} />}
+      </div>
     </>
   );
 }

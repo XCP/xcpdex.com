@@ -38,6 +38,24 @@ interface TradingPairData {
   quote_asset: {
     symbol: string;
   };
+  other_markets?: OtherMarket[];
+}
+
+interface OtherMarket {
+  name: string;
+  slug: string;
+  last_trade?: {
+    price?: string;
+    price_usd?: string;
+    market_cap?: string;
+    market_cap_usd?: string;
+    volume?: string;
+    link: string;
+    confirmed_at: string;
+  };
+  quote_asset: {
+    symbol: string;
+  };
 }
 
 export default function TradePage({ params }: TradePageParams) {

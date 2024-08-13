@@ -20,7 +20,6 @@ interface OtherMarket {
   quote_asset: {
     symbol: string;
   };
-  other_markets?: OtherMarket[];
 }
 
 interface OtherMarketsProps {

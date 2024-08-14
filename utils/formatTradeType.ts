@@ -1,4 +1,6 @@
 export function formatTradeType(tradeType: string): string {
+  if (tradeType === 'socket.dex-trade.com') return 'Dex-trade.com';
+
   if (tradeType.includes('_')) {
     // Convert snake case to title case
     return tradeType

@@ -8,6 +8,7 @@ import { Link } from '@/components/link';
 import { Stat } from '@/components/stat';
 import { OrderBook } from '@/components/order-book';
 import { OrderMatches } from '@/components/order-matches';
+import { TradeHistory } from '@/components/trade-history';
 import OtherMarkets from '@/components/other-markets';
 import ApexChart from '@/components/apex-chart';
 import ApexAreaChart from '@/components/apex-areachart';
@@ -40,6 +41,7 @@ interface TradingPairData {
   };
   quote_asset: {
     symbol: string;
+    type: string;
   };
   other_markets?: OtherMarket[];
 }
@@ -74,7 +76,7 @@ export default function TradePage({ params }: TradePageParams) {
       try {
         const response = await fetch(`https://api.xcp.io/api/v1/trading-pair/${tradingPair}`);
         const json = await response.json();
-        setPairData(json.data);
+        setPairData(json);
       } catch (error) {
         console.error('Failed to fetch trading pair data:', error);
       }
@@ -83,8 +85,8 @@ export default function TradePage({ params }: TradePageParams) {
     fetchPairData();
   }, [tradingPair]);
 
-  const reversedMarket = market.split('/').reverse().join('/');
-
+  const isBitcoinOrFiatOrEthereum = pairData?.quote_asset.symbol === 'BTC' || pairData?.quote_asset.type === 'fiat' || pairData?.quote_asset.type === 'ethereum';
+  
   return (
     <>
       <div className="max-lg:hidden">
@@ -219,7 +221,13 @@ export default function TradePage({ params }: TradePageParams) {
       </Navbar>
       <Divider />
       <div className="mt-8">
-        {activeTable === 'trades' && <OrderMatches market={market} setTradesCount={setTradesCount} />}
+      {activeTable === 'trades' && pairData && (
+          isBitcoinOrFiatOrEthereum ? (
+            <TradeHistory market={tradingPair} setTradesCount={setTradesCount} />
+          ) : (
+            <OrderMatches market={market} setTradesCount={setTradesCount} />
+          )
+        )}
         {activeTable === 'holders' && <AssetBalances asset={pairData?.base_asset?.asset} issued={pairData?.base_asset?.issued || 0} setHoldersCount={setHoldersCount} />}
       </div>
     </>

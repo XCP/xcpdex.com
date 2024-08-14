@@ -59,8 +59,8 @@ export function OrderMatches({ market, setTradesCount }: OrderMatchesProps) {
           <TableHead>
             <TableRow>
               <TableHeader className="w-14">Side</TableHeader>
-              <TableHeader>Price</TableHeader>
               <TableHeader>Amount</TableHeader>
+              <TableHeader>Price</TableHeader>
               <TableHeader>Maker</TableHeader>
               <TableHeader className="hidden 3xl:table-cell">Taker</TableHeader>
               <TableHeader>Time</TableHeader>
@@ -105,18 +105,18 @@ export function OrderMatches({ market, setTradesCount }: OrderMatchesProps) {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Avatar src={`https://api.xcp.io/img/icon/${getQuoteAssetString(orderLike)}`} className="size-6" />
-                        <span className="font-medium">
-                          {calculatePrice(orderLike)}
+                        <span className="ml-auto font-medium text-right">
+                          {calculateAmount(orderLike)}
                         </span>
+                        <Avatar src={`https://api.xcp.io/img/icon/${getBaseAssetString(orderLike)}`} className="size-6" />
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Avatar src={`https://api.xcp.io/img/icon/${getBaseAssetString(orderLike)}`} className="size-6" />
-                        <span className="font-medium">
-                          {calculateAmount(orderLike)}
+                        <span className="ml-auto font-medium text-right">
+                          {calculatePrice(orderLike)}
                         </span>
+                        <Avatar src={`https://api.xcp.io/img/icon/${getQuoteAssetString(orderLike)}`} className="size-6" />
                       </div>
                     </TableCell>
                     <TableCell className="no-ligatures">

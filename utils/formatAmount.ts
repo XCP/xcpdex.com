@@ -21,38 +21,37 @@ export function formatAmount(amount: string | number, usd: boolean = false, pct:
 
   // Handle decimals for numbers less than 1000
   if (num < 1_000) {
-    // Convert number to string to manipulate decimals
-    const numStr = num.toString();
-
-    // Find the index of the first significant digit after the decimal point
-    const significantIndex = numStr.search(/[1-9]/) - numStr.indexOf('.') - 1;
-
     let formattedNumber: string;
 
+    // Handle the number as a string to preserve small decimal precision
+    const numStr = typeof amount === 'number' ? amount.toString() : amount;
+
+    // Find the first significant digit after the decimal point
+    const significantIndex = numStr.indexOf('.') >= 0 ? numStr.search(/[1-9]/) - numStr.indexOf('.') - 1 : 0;
+
     // Determine precision based on the significant digit's position
-    
     if (usd) {
       if (num < 1 && significantIndex < 4) {
-        formattedNumber = num.toPrecision(4);
+        formattedNumber = parseFloat(numStr).toPrecision(4);
       } else if (num < 1) {
-        formattedNumber = num.toPrecision(2)
+        formattedNumber = parseFloat(numStr).toPrecision(2);
       } else {
-        formattedNumber = num.toFixed(2);
+        formattedNumber = parseFloat(numStr).toFixed(2);
       }
     } else if (pct && num > 1) {
-      formattedNumber = num.toFixed(2);
+      formattedNumber = parseFloat(numStr).toFixed(2);
     } else if (significantIndex < 4) {
-      formattedNumber = num.toFixed(4);
+      formattedNumber = parseFloat(numStr).toFixed(4);
     } else if (significantIndex < 6) {
-      formattedNumber = num.toFixed(6);
+      formattedNumber = parseFloat(numStr).toFixed(6);
     } else if (significantIndex < 8) {
-      formattedNumber = num.toFixed(8);
+      formattedNumber = parseFloat(numStr).toFixed(8);
     } else {
-      formattedNumber = num.toPrecision(2);
+      formattedNumber = parseFloat(numStr).toPrecision(2);
     }
 
-    // Convert back to a number and remove any trailing zeros
-    return parseFloat(formattedNumber).toString();
+    // Return the formatted number as a string
+    return formattedNumber.replace(/\.?0+$/, ''); // Remove trailing zeros
   }
 
   // Fallback for other cases

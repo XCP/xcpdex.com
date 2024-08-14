@@ -15,10 +15,6 @@ export function formatAmountTrade(amount: string | number, usd: boolean = false,
     return (num / 1_000_000_000_000).toFixed(2) + 'T';
   } else if (num >= 1_000_000_000) {
     return (num / 1_000_000_000).toFixed(2) + 'B';
-  } else if (num >= 1_000_000) {
-    return (num / 1_000_000).toFixed(2) + 'M';
-  } else if (num >= 1_000) {
-    return formatAmountSimple(Math.floor(num));
   }
 
   // Handle numbers less than 1000 with up to 8 decimal places

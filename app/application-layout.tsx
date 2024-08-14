@@ -178,7 +178,7 @@ export function ApplicationLayout({
             <SidebarSection className="max-lg:hidden">
               <SidebarHeading>Trending</SidebarHeading>
               {markets.map((market) => (
-                <SidebarItem key={market.slug} href={`/trade/${market.slug}`}>
+                <SidebarItem key={market.slug} href={`/trade/${market.slug}`} current={pathname.startsWith(`/trade/${market.slug}`)}>
                   {market.name}
                 </SidebarItem>
               ))}

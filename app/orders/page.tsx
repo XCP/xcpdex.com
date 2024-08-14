@@ -12,7 +12,7 @@ export default function OrdersPage() {
 
   return (
     <>
-      <div className="flex items-center lg:items-end justify-between gap-4">
+      <div className="mb-8 flex items-center lg:items-end justify-between gap-4">
         <Heading>Orders</Heading>
         <div className="ml-auto w-auto relative">
           <Select

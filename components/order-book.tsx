@@ -84,7 +84,7 @@ export function OrderBook({ market, side, setBaseAsset, setQuoteAsset }: OrderBo
                 {quoteSubtotal(index)}
               </TableCell>
               <TableCell>
-                <a href={`https://xcpdex.com/address/${order.source}`}>{order.source}</a>
+                <a href={`/address/${order.source}`}>{order.source}</a>
               </TableCell>
             </TableRow>
           )) : (

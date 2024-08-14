@@ -117,6 +117,11 @@ export function assetsToTradingPair(order: Order, useRawAssets: boolean = false)
   return [baseSymbol, quoteSymbol];
 }
 
+export function getTradingPairSlug(order: Order): string {
+  const [base, quote] = assetsToTradingPair(order);
+  return `${base}_${quote}`;
+}
+
 export function getTradingPairString(order: Order): string {
   const [base, quote] = assetsToTradingPair(order);
   return `${base}/${quote}`;
@@ -128,7 +133,7 @@ export function getBaseAssetString(order: Order): string {
 }
 
 export function getQuoteAssetString(order: Order): string {
-  const [quote] = assetsToTradingPair(order);
+  const [, quote] = assetsToTradingPair(order);
   return quote;
 }
 

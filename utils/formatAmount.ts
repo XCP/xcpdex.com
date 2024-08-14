@@ -35,7 +35,7 @@ export function formatAmount(amount: string | number, usd: boolean = false, pct:
       if (num < 1 && significantIndex < 4) {
         formattedNumber = num.toPrecision(4);
       } else if (num < 1) {
-        formattedNumber = num.toPrecision(2);
+        formattedNumber = num.toPrecision(2)
       } else {
         formattedNumber = num.toFixed(2);
       }

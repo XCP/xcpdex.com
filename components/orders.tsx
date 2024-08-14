@@ -105,15 +105,15 @@ export function Orders({ endpoint, status = 'all' }: OrdersProps) {
     </div>
   ) : (
     <>
-      <Table className="mt-8 [--gutter:theme(spacing.6)] lg:[--gutter:theme(spacing.10)]">
+      <Table className="[--gutter:theme(spacing.6)] lg:[--gutter:theme(spacing.10)]">
         <TableHead>
           <TableRow>
-            <TableHeader>Side</TableHeader>
+            <TableHeader className="w-14">Side</TableHeader>
             <TableHeader>Market</TableHeader>
             <TableHeader>Price</TableHeader>
             <TableHeader className="hidden 2xl:table-cell">Amount</TableHeader>
             <TableHeader>Status</TableHeader>
-            <TableHeader className="text-right">Time</TableHeader>
+            <TableHeader>Time</TableHeader>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -161,7 +161,7 @@ export function Orders({ endpoint, status = 'all' }: OrdersProps) {
                       {order.status.split(':')[0]}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-zinc-500 text-right">
+                  <TableCell className="text-zinc-500">
                     {formatTimeAgo(order.block_time)}
                   </TableCell>
                 </TableRow>

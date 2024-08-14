@@ -15,6 +15,7 @@ import AssetBalances from '@/components/asset-balances';
 import { ChevronLeftIcon, PresentationChartBarIcon, PresentationChartLineIcon, CheckBadgeIcon } from '@heroicons/react/16/solid';
 import { Navbar, NavbarItem, NavbarSection } from '@/components/navbar';
 import { formatAmount } from '@/utils/formatAmount';
+import { formatTradeType } from '@/utils/formatTradeType';
 
 interface TradePageParams {
   params: {
@@ -64,10 +65,9 @@ export default function TradePage({ params }: TradePageParams) {
   const [activeInterval, setActiveInterval] = useState('1m');
   const [activeTab, setActiveTab] = useState('area');
   const [activeTable, setActiveTable] = useState('trades');
-  const [baseAsset, setBaseAsset] = useState('');
-  const [quoteAsset, setQuoteAsset] = useState('');
   const [pairData, setPairData] = useState<TradingPairData | null>(null);
   const [holdersCount, setHoldersCount] = useState<number>(0);
+  const [tradesCount, setTradesCount] = useState<number>(0);
 
   useEffect(() => {
     const fetchPairData = async () => {
@@ -83,6 +83,8 @@ export default function TradePage({ params }: TradePageParams) {
     fetchPairData();
   }, [tradingPair]);
 
+  const reversedMarket = market.split('/').reverse().join('/');
+
   return (
     <>
       <div className="max-lg:hidden">
@@ -94,7 +96,7 @@ export default function TradePage({ params }: TradePageParams) {
       <div className="mt-4 mb-8 flex flex-wrap items-end justify-between gap-4">
         <div className="flex sm:flex-wrap items-center gap-6">
           <div className="w-20 shrink-0">
-            <img className="w-20 aspect-square rounded-lg shadow" src={`https://api.xcp.io/img/full/${baseAsset}`} alt={tradingPair} />
+            <img className="w-20 aspect-square rounded-lg shadow" src={`https://api.xcp.io/img/full/${pairData?.base_asset.asset}`} alt={tradingPair} />
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
@@ -105,15 +107,15 @@ export default function TradePage({ params }: TradePageParams) {
               <div className="mt-2 text-sm/6 text-zinc-500">
                 Last traded on {new Date(pairData.last_trade_date * 1000).toLocaleDateString()} <span aria-hidden="true">·</span>{' '}
                 <a href={pairData.last_trade_link} target="_blank" rel="noopener noreferrer">
-                  Counterparty
+                  {formatTradeType(pairData.last_trade_type)}
                 </a>
               </div>
             )}
           </div>
         </div>
         <div className="flex gap-4">
-          <Button href={`https://www.xcp.io/asset/${baseAsset}`} target="_blank" outline>XCP.io</Button>
-          <Button href="#">Trade</Button>
+          <Button href="#" outline>Trade</Button>
+          <Button href={`https://www.xcp.io/asset/${pairData?.base_asset.asset}`} target="_blank">XCP.io</Button>
         </div>
       </div>
       <div className="grid gap-6 sm:gap-8 grid-cols-3">
@@ -197,17 +199,6 @@ export default function TradePage({ params }: TradePageParams) {
         {activeTab === 'area' && <ApexAreaChart pairSlug={tradingPair} interval={activeInterval} />}
       </div>
       <Divider />
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div>
-          <h2 className="mt-3 mb-3">Buy Orders</h2>
-          <OrderBook market={market} side="buy" setBaseAsset={setBaseAsset} setQuoteAsset={setQuoteAsset} />
-        </div>
-        <div>
-          <h2 className="mt-3 mb-3">Sell Orders</h2>
-          <OrderBook market={market} side="sell" setBaseAsset={setBaseAsset} setQuoteAsset={setQuoteAsset} />
-        </div>
-      </div>
-      <Divider />
       <Navbar className="mt-8">
         <NavbarSection>
           <NavbarItem
@@ -215,21 +206,21 @@ export default function TradePage({ params }: TradePageParams) {
             onClick={() => setActiveTable('trades')}
             current={activeTable === 'trades'}
           >
-            Trades
+            Trades {tradesCount > 0 && `(${formatAmount(tradesCount)})`}
           </NavbarItem>
           <NavbarItem
             as="button"
             onClick={() => setActiveTable('holders')}
             current={activeTable === 'holders'}
           >
-            Holders {holdersCount > 0 && `(${holdersCount})`}
+            Holders {holdersCount > 0 && `(${formatAmount(holdersCount)})`}
           </NavbarItem>
         </NavbarSection>
       </Navbar>
       <Divider />
       <div className="mt-8">
-        {activeTable === 'trades' && <OrderMatches market={market} />}
-        {activeTable === 'holders' && <AssetBalances asset={pairData?.base_asset?.asset} supply={pairData?.base_asset?.supply || 0} setHoldersCount={setHoldersCount} />}
+        {activeTable === 'trades' && <OrderMatches market={market} setTradesCount={setTradesCount} />}
+        {activeTable === 'holders' && <AssetBalances asset={pairData?.base_asset?.asset} issued={pairData?.base_asset?.issued || 0} setHoldersCount={setHoldersCount} />}
       </div>
     </>
   );

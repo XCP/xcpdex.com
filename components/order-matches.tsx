@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { Avatar } from '@/components/avatar';
 import { Badge } from '@/components/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table';
 import { formatTimeAgo } from '@/utils/formatTimeAgo';
@@ -18,31 +19,33 @@ import {
 
 interface OrderMatchesProps {
   market: string;
+  setTradesCount: (count: number) => void;
 }
 
-async function fetchOrderMatches(market: string): Promise<OrderMatch[]> {
+async function fetchOrderMatches(market: string): Promise<{ matches: OrderMatch[], count: number }> {
   // Split the market pair, reverse the order, and join it back
   const reversedMarket = market.split('/').reverse().join('/');
 
   // Use the reversed market pair in the URL
   const res = await fetch(`https://api.counterparty.info/v2/orders/${reversedMarket}/matches?status=completed&verbose=true`);
   const data = await res.json();
-  return data.result;
+  return { matches: data.result, count: data.result_count };
 }
 
-export function OrderMatches({ market }: OrderMatchesProps) {
+export function OrderMatches({ market, setTradesCount }: OrderMatchesProps) {
   const [matches, setMatches] = useState<OrderMatch[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadMatches() {
       setLoading(true);
-      const fetchedMatches = await fetchOrderMatches(market);
-      setMatches(fetchedMatches);
+      const { matches, count } = await fetchOrderMatches(market);
+      setMatches(matches);
+      setTradesCount(count);
       setLoading(false);
     }
     loadMatches();
-  }, [market]);
+  }, [market, setTradesCount]);
 
   return (
     <>
@@ -55,11 +58,11 @@ export function OrderMatches({ market }: OrderMatchesProps) {
         <Table className="table-responsive order-matches">
           <TableHead>
             <TableRow>
-              <TableHeader>Side</TableHeader>
+              <TableHeader className="w-14">Side</TableHeader>
               <TableHeader>Price</TableHeader>
-              <TableHeader>Quantity</TableHeader>
+              <TableHeader>Amount</TableHeader>
               <TableHeader>Maker</TableHeader>
-              <TableHeader className="hidden 2xl:table-cell">Taker</TableHeader>
+              <TableHeader className="hidden 3xl:table-cell">Taker</TableHeader>
               <TableHeader>Time</TableHeader>
             </TableRow>
           </TableHead>
@@ -94,18 +97,32 @@ export function OrderMatches({ market }: OrderMatchesProps) {
                 const direction = getTradingDirection(orderLike);
 
                 return (
-                  <TableRow key={match.id}>
+                  <TableRow key={match.id} href={`/orders/${orderLike.tx_hash}`}>
                     <TableCell>
                       <Badge color={direction === 'buy' ? 'green' : 'red'} className="capitalize">
                         {direction === 'buy' ? 'Buy' : 'Sell'}
                       </Badge>
                     </TableCell>
-                    <TableCell>{calculatePrice(orderLike)}</TableCell>
-                    <TableCell>{calculateAmount(orderLike)}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Avatar src={`https://api.xcp.io/img/icon/${getQuoteAssetString(orderLike)}`} className="size-6" />
+                        <span className="font-medium">
+                          {calculatePrice(orderLike)}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Avatar src={`https://api.xcp.io/img/icon/${getBaseAssetString(orderLike)}`} className="size-6" />
+                        <span className="font-medium">
+                          {calculateAmount(orderLike)}
+                        </span>
+                      </div>
+                    </TableCell>
                     <TableCell className="no-ligatures">
                       {match.tx0_address}
                     </TableCell>
-                    <TableCell className="no-ligatures hidden 2xl:table-cell">
+                    <TableCell className="no-ligatures hidden 3xl:table-cell">
                       {match.tx1_address}
                     </TableCell>
                     <TableCell className="text-zinc-500">

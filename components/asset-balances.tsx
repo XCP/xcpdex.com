@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { Avatar } from '@/components/avatar';
 import { Badge } from '@/components/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table';
 import { ArrowPathIcon, FireIcon, UserIcon } from '@heroicons/react/16/solid';
@@ -40,7 +41,7 @@ async function fetchAssetBalances(asset: string): Promise<{ balances: Balance[],
 
 interface AssetBalancesProps {
   asset: string | undefined;
-  supply: number;
+  issued: number;
   setHoldersCount: (count: number) => void;
 }
 
@@ -169,7 +170,7 @@ const BURN_ADDRESSES = [
 ];
 
 // AssetBalances component
-export function AssetBalances({ asset, supply, setHoldersCount }: AssetBalancesProps) {
+export function AssetBalances({ asset, issued, setHoldersCount }: AssetBalancesProps) {
   const [balances, setBalances] = useState<Balance[]>([]);
   const [resultCount, setResultCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -213,7 +214,7 @@ export function AssetBalances({ asset, supply, setHoldersCount }: AssetBalancesP
         <Table className="table-responsive asset-balances">
           <TableHead>
             <TableRow>
-              <TableHeader>Rank</TableHeader>
+              <TableHeader className="w-14">Rank</TableHeader>
               <TableHeader>Address</TableHeader>
               <TableHeader>Amount</TableHeader>
               <TableHeader className="text-right">%</TableHeader>
@@ -227,23 +228,28 @@ export function AssetBalances({ asset, supply, setHoldersCount }: AssetBalancesP
                 return (
                   <TableRow key={balance.address} href={`/address/${balance.address}`}>
                     <TableCell className="text-zinc-500">#{index + 1}</TableCell>
-                    <TableCell className="no-ligatures flex items-center">
-                      {balance.address}
-                      {isBurnAddress(balance.address) && (
-                        <Badge color="orange" className="flex items-center ml-4">
-                          <FireIcon className="size-2 sm:size-3 text-red-500" />
-                          Burn
-                        </Badge>
-                      )}
-                      {role && (
-                        <Badge color={role === 'issuer' ? 'blue' : 'green'} className="ml-2">
-                          <UserIcon className="size-2 sm:size-3" />
-                          {role.charAt(0).toUpperCase() + role.slice(1)}
-                        </Badge>
-                      )}
+                    <TableCell className="no-ligatures flex items-center  gap-2">
+                      <div className="flex items-center gap-2">
+                        <Avatar src={`https://api.xcp.io/img/icon/${asset}`} className="size-6" />
+                        <span className="font-medium">
+                          {balance.address}
+                          {isBurnAddress(balance.address) && (
+                            <Badge color="orange" className="flex items-center ml-4">
+                              <FireIcon className="size-2 sm:size-3 text-red-500" />
+                              Burn
+                            </Badge>
+                          )}
+                          {role && (
+                            <Badge color={role === 'issuer' ? 'blue' : 'green'} className="ml-2">
+                              <UserIcon className="size-2 sm:size-3" />
+                              {role.charAt(0).toUpperCase() + role.slice(1)}
+                            </Badge>
+                          )}
+                        </span>
+                      </div>
                     </TableCell>
                     <TableCell>{formatAmount(balance.quantity_normalized)}</TableCell>
-                    <TableCell className="text-right">{formatAmount((balance.quantity_normalized / supply) * 100, false, true)}%</TableCell>
+                    <TableCell className="text-right">{formatAmount((balance.quantity_normalized / issued) * 100, false, true)}%</TableCell>
                   </TableRow>
                 );
               })
@@ -256,9 +262,9 @@ export function AssetBalances({ asset, supply, setHoldersCount }: AssetBalancesP
               <TableRow className="font-bold">
                 <TableCell>#101</TableCell>
                 <TableCell>Other Addresses</TableCell>
-                <TableCell>{formatAmount(supply - balancesSum)}</TableCell>
+                <TableCell>{formatAmount(issued - balancesSum)}</TableCell>
                 <TableCell className="text-right">
-                  {formatAmount(((supply - balancesSum) / supply) * 100, false, true)}%
+                  {formatAmount(((issued - balancesSum) / issued) * 100, false, true)}%
                 </TableCell>
               </TableRow>
             )}

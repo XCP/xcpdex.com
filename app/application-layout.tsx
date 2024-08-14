@@ -1,5 +1,6 @@
 'use client'
 
+import React, { useEffect, useState } from 'react';
 import { Avatar } from '@/components/avatar'
 import {
   Dropdown,
@@ -42,6 +43,25 @@ import {
 } from '@heroicons/react/20/solid'
 import { usePathname } from 'next/navigation'
 
+async function fetchTrendingMarkets() {
+  const response = await fetch('https://api.xcp.io/api/v1/trading-pair/trending', {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch trending markets');
+  }
+
+  const data = await response.json();
+  return data.result;
+}
+
+interface Market {
+  name: string;
+  slug: string;
+  last_trade_link: string;
+}
+
 function AccountDropdownMenu({ anchor }: { anchor: 'top start' | 'bottom end' }) {
   return (
     <DropdownMenu className="min-w-64" anchor={anchor}>
@@ -73,6 +93,20 @@ export function ApplicationLayout({
   children: React.ReactNode
 }) {
   let pathname = usePathname()
+  const [markets, setMarkets] = useState<Market[]>([]);
+
+  useEffect(() => {
+    async function loadMarkets() {
+      try {
+        const trendingMarkets = await fetchTrendingMarkets();
+        setMarkets(trendingMarkets);
+      } catch (error) {
+        console.error('Error fetching trending markets:', error);
+      }
+    }
+
+    loadMarkets();
+  }, []);
 
   return (
     <SidebarLayout
@@ -142,10 +176,12 @@ export function ApplicationLayout({
             </SidebarSection>
 
             <SidebarSection className="max-lg:hidden">
-              <SidebarHeading>Upcoming Events</SidebarHeading>
-              <SidebarItem href="#">
-                Test
-              </SidebarItem>
+              <SidebarHeading>Trending</SidebarHeading>
+              {markets.map((market) => (
+                <SidebarItem key={market.slug} href={`/trade/${market.slug}`}>
+                  {market.name}
+                </SidebarItem>
+              ))}
             </SidebarSection>
 
             <SidebarSpacer />

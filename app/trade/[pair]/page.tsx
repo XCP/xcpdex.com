@@ -107,7 +107,7 @@ export default function TradePage({ params }: TradePageParams) {
               <div className="mt-2 text-sm/6 text-zinc-500">
                 Last traded on {new Date(pairData.last_trade_date * 1000).toLocaleDateString()} <span aria-hidden="true">·</span>{' '}
                 <a href={pairData.last_trade_link} target="_blank" rel="noopener noreferrer">
-                  {formatTradeType(pairData.last_trade_type)}
+                  {formatTradeType(pairData?.last_trade_type ?? 'Unknown')}
                 </a>
               </div>
             )}

@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import { formatAmountSimple } from '@/utils/formatAmountSimple';
 
 export interface AssetInfo {
   asset_longname: string | null;
@@ -147,17 +148,17 @@ export function calculatePrice(order: Order): string {
   const baseQuantity = new BigNumber(order.give_asset === baseSymbol ? order.give_quantity_normalized : order.get_quantity_normalized);
   const quoteQuantity = new BigNumber(order.give_asset === quoteSymbol ? order.give_quantity_normalized : order.get_quantity_normalized);
   const price = quoteQuantity.dividedBy(baseQuantity);
-  return price.toFixed(8);
+  return formatAmountSimple(price.toFixed(8));
 }
 
 export function calculateAmount(order: Order): string {
   const [baseSymbol] = assetsToTradingPair(order);
   const baseQuantity = new BigNumber(order.give_asset === baseSymbol ? order.give_quantity_normalized : order.get_quantity_normalized);
-  return baseQuantity.toFixed(8);
+  return formatAmountSimple(baseQuantity.toFixed(8));
 }
 
 export function calculateTotal(order: Order): string {
   const [, quoteSymbol] = assetsToTradingPair(order);
   const quoteQuantity = new BigNumber(order.give_asset === quoteSymbol ? order.give_quantity_normalized : order.get_quantity_normalized);
-  return quoteQuantity.toFixed(8);
+  return formatAmountSimple(quoteQuantity.toFixed(8));
 }

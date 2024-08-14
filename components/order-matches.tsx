@@ -97,7 +97,7 @@ export function OrderMatches({ market, setTradesCount }: OrderMatchesProps) {
                 const direction = getTradingDirection(orderLike);
 
                 return (
-                  <TableRow key={match.id} href={`/orders/${orderLike.tx_hash}`}>
+                  <TableRow key={match.id} href={`https://www.xcp.io/tx/${orderLike.tx_hash}`} target="_blank">
                     <TableCell>
                       <Badge color={direction === 'buy' ? 'green' : 'red'} className="capitalize">
                         {direction === 'buy' ? 'Buy' : 'Sell'}

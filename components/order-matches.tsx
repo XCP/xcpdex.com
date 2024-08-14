@@ -120,10 +120,10 @@ export function OrderMatches({ market, setTradesCount }: OrderMatchesProps) {
                       </div>
                     </TableCell>
                     <TableCell className="no-ligatures">
-                      {match.tx0_address}
+                      {match.tx1_address}
                     </TableCell>
                     <TableCell className="no-ligatures hidden 3xl:table-cell">
-                      {match.tx1_address}
+                      {match.tx0_address}
                     </TableCell>
                     <TableCell className="text-zinc-500">
                       {formatTimeAgo(match.block_time)}

@@ -47,13 +47,16 @@ export interface OrderMatch {
   tx0_hash: string;
   tx0_index: number;
   tx0_block_index: number;
+  tx1_address: string;
+  tx1_hash: string;
+  tx1_index: number;
+  tx1_block_index: number;
   forward_quantity: number;
   backward_quantity: number;
-  tx0_expiration: number;
+  tx1_expiration: number;
   match_expire_index: number;
   status: string;
   confirmed: boolean;
-  tx1_address: string;
   forward_asset_info: AssetInfo;
   backward_asset_info: AssetInfo;
 }

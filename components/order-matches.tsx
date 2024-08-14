@@ -20,6 +20,7 @@ import {
 interface OrderMatchesProps {
   market: string;
   setTradesCount: (count: number) => void;
+  direction?: string;
 }
 
 async function fetchOrderMatches(market: string): Promise<{ matches: OrderMatch[], count: number }> {
@@ -32,7 +33,7 @@ async function fetchOrderMatches(market: string): Promise<{ matches: OrderMatch[
   return { matches: data.result, count: data.result_count };
 }
 
-export function OrderMatches({ market, setTradesCount }: OrderMatchesProps) {
+export function OrderMatches({ market, setTradesCount, direction }: OrderMatchesProps) {
   const [matches, setMatches] = useState<OrderMatch[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -71,36 +72,42 @@ export function OrderMatches({ market, setTradesCount }: OrderMatchesProps) {
               matches.map((match) => {
                 // Creating an order-like object to use with utility functions
                 const orderLike = {
-                  tx_index: match.tx0_index,
-                  tx_hash: match.tx0_hash,
-                  block_index: match.tx0_block_index,
-                  source: match.tx0_address,
-                  give_asset: match.forward_asset,
-                  give_quantity: match.forward_quantity,
+                  tx_index: match.tx1_index,
+                  tx_hash: match.tx1_hash,
+                  block_index: match.tx1_block_index,
+                  source: match.tx1_address,
+                  give_asset: match.backward_asset,
+                  give_quantity: match.backward_quantity,
                   give_remaining: 0,
-                  get_asset: match.backward_asset,
-                  get_quantity: match.backward_quantity,
+                  get_asset: match.forward_asset,
+                  get_quantity: match.forward_quantity,
                   get_remaining: 0,
-                  expiration: match.tx0_expiration,
+                  expiration: match.tx1_expiration,
                   expire_index: match.match_expire_index,
                   status: match.status,
                   confirmed: match.confirmed,
                   block_time: match.block_time,
-                  give_asset_info: match.forward_asset_info,
-                  get_asset_info: match.backward_asset_info,
-                  give_quantity_normalized: match.forward_quantity_normalized,
-                  get_quantity_normalized: match.backward_quantity_normalized,
+                  give_asset_info: match.backward_asset_info,
+                  get_asset_info: match.forward_asset_info,
+                  give_quantity_normalized: match.backward_quantity_normalized,
+                  get_quantity_normalized: match.forward_quantity_normalized,
                   get_remaining_normalized: '0', // Assuming 0 as a placeholder
                   give_remaining_normalized: '0', // Assuming 0 as a placeholder
                 };                
 
-                const direction = getTradingDirection(orderLike);
-
+                const matchDirection = direction 
+                ? direction === 'sell' 
+                  ? 'buy' 
+                  : direction === 'buy' 
+                    ? 'sell' 
+                    : getTradingDirection(orderLike)
+                : getTradingDirection(orderLike);
+              
                 return (
-                  <TableRow key={match.id} href={`https://www.xcp.io/tx/${orderLike.tx_hash}`} target="_blank">
+                  <TableRow key={match.id} href={`/orders/${market === match.tx1_hash ? match.tx0_hash : match.tx1_hash}`}>
                     <TableCell>
-                      <Badge color={direction === 'buy' ? 'green' : 'red'} className="capitalize">
-                        {direction === 'buy' ? 'Buy' : 'Sell'}
+                      <Badge color={matchDirection === 'buy' ? 'green' : 'red'} className="capitalize">
+                        {matchDirection === 'buy' ? 'Buy' : 'Sell'}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -120,10 +127,10 @@ export function OrderMatches({ market, setTradesCount }: OrderMatchesProps) {
                       </div>
                     </TableCell>
                     <TableCell className="no-ligatures">
-                      {match.tx1_address}
+                      {market === match.tx1_hash ? match.tx0_address : match.tx1_address}
                     </TableCell>
                     <TableCell className="no-ligatures hidden 3xl:table-cell">
-                      {match.tx0_address}
+                      {market === match.tx0_hash ? match.tx1_address : match.tx0_address}
                     </TableCell>
                     <TableCell className="text-zinc-500">
                       {formatTimeAgo(match.block_time)}

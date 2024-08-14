@@ -8,6 +8,7 @@ import { Button } from '@/components/button';
 import { Divider } from '@/components/divider';
 import { Heading, Subheading } from '@/components/heading';
 import { Link } from '@/components/link';
+import { OrderMatches } from '@/components/order-matches';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/description-list';
 import { BanknotesIcon, CalendarIcon, ChevronLeftIcon, CreditCardIcon } from '@heroicons/react/16/solid';
 import { Order, getTradingPairString, getTradingPairSlug, getTradingDirection, getBaseAssetString, getQuoteAssetString, calculatePrice, calculateAmount, calculateTotal } from '@/utils/tradingPairUtils';
@@ -15,6 +16,7 @@ import { Order, getTradingPairString, getTradingPairSlug, getTradingDirection, g
 export default function OrderPage({ params }: { params: { txHash: string } }) {
   const { txHash } = params;
   const [order, setOrder] = useState<Order | null>(null);
+  const [tradesCount, setTradesCount] = useState<number>(0);
 
   useEffect(() => {
     async function fetchOrder() {
@@ -108,7 +110,7 @@ export default function OrderPage({ params }: { params: { txHash: string } }) {
           <DescriptionTerm>Source</DescriptionTerm>
           <DescriptionDetails>
             <Link href={`/address/${order.source}`}>
-              <span className="font-medium">{order.source}</span>
+              <span className="font-medium no-ligatures">{order.source}</span>
             </Link>
           </DescriptionDetails>
           <DescriptionTerm>Price</DescriptionTerm>
@@ -120,32 +122,9 @@ export default function OrderPage({ params }: { params: { txHash: string } }) {
         </DescriptionList>
       </div>
       <div className="mt-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div>
-            <Subheading>Base Asset</Subheading>
-            <Divider className="mt-4" />
-            <DescriptionList>
-              <DescriptionTerm>Asset</DescriptionTerm>
-              <DescriptionDetails>{baseAssetSymbol}</DescriptionDetails>
-              <DescriptionTerm>Description</DescriptionTerm>
-              <DescriptionDetails>{order.give_asset_info?.description}</DescriptionDetails>
-              <DescriptionTerm>Quantity</DescriptionTerm>
-              <DescriptionDetails>{order.give_quantity_normalized}</DescriptionDetails>
-            </DescriptionList>
-          </div>
-          <div>
-            <Subheading>Quote Asset</Subheading>
-            <Divider className="mt-4" />
-            <DescriptionList>
-              <DescriptionTerm>Asset</DescriptionTerm>
-              <DescriptionDetails>{quoteAssetSymbol}</DescriptionDetails>
-              <DescriptionTerm>Description</DescriptionTerm>
-              <DescriptionDetails>{order.get_asset_info?.description}</DescriptionDetails>
-              <DescriptionTerm>Quantity</DescriptionTerm>
-              <DescriptionDetails>{order.get_quantity_normalized}</DescriptionDetails>
-            </DescriptionList>
-          </div>
-        </div>
+        <Subheading>Matches</Subheading>
+        <Divider className="mt-4" />
+        <OrderMatches market={txHash} setTradesCount={setTradesCount} direction={direction} />
       </div>
     </>
   );

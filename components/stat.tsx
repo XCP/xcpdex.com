@@ -41,10 +41,12 @@ export function Stat({ title, value, subvalue, issued = 0, burned = 0 }: StatPro
           <span className="ml-2 text-zinc-500">{subvalue}</span>
           {burned > 0 && (
             <>
-              <Badge color="orange" className="flex items-center ml-4">
+              <Badge color="orange" className="flex items-center ml-4 hidden sm:flex">
                 <FireIcon className="size-2 sm:size-3 text-red-500" />
               </Badge>
-              <span className="ml-2 text-zinc-500">{formatAmount(burnPercentage, false, true)}% Burned</span>
+              <span className="ml-2 text-zinc-500 hidden sm:inline">
+                {formatAmount(burnPercentage, false, true)}% Burned
+              </span>
             </>
           )}
         </div>

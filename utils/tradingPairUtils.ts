@@ -92,6 +92,33 @@ const getAssetSymbol = (assetInfo: AssetInfo, fallback: string): string => {
   return assetInfo.asset_longname ? assetInfo.asset_longname : fallback;
 };
 
+export function assetsToTradingPairFromSymbols(giveSymbol: string, getSymbol: string): [string, string] {
+  let baseSymbol: string, quoteSymbol: string;
+
+  if (isQuoteAssetDirect(giveSymbol) && isQuoteAssetDirect(getSymbol)) {
+    [baseSymbol, quoteSymbol] = getQuoteRank(giveSymbol) < getQuoteRank(getSymbol) ? [getSymbol, giveSymbol] : [giveSymbol, getSymbol];
+  } else if (isQuoteAssetDirect(giveSymbol)) {
+    [baseSymbol, quoteSymbol] = [getSymbol, giveSymbol];
+  } else if (isQuoteAssetDirect(getSymbol)) {
+    [baseSymbol, quoteSymbol] = [giveSymbol, getSymbol];
+  } else if (isQuoteAssetFallback(giveSymbol) && isQuoteAssetFallback(getSymbol)) {
+    [baseSymbol, quoteSymbol] = getQuoteRank(giveSymbol) < getQuoteRank(getSymbol) ? [getSymbol, giveSymbol] : [giveSymbol, getSymbol];
+  } else if (isQuoteAssetFallback(giveSymbol)) {
+    [baseSymbol, quoteSymbol] = [getSymbol, giveSymbol];
+  } else if (isQuoteAssetFallback(getSymbol)) {
+    [baseSymbol, quoteSymbol] = [giveSymbol, getSymbol];
+  } else {
+    [baseSymbol, quoteSymbol] = giveSymbol < getSymbol ? [giveSymbol, getSymbol] : [getSymbol, giveSymbol];
+  }
+
+  return [baseSymbol, quoteSymbol];
+}
+
+export function getTradingPairSlugFromSymbols(giveSymbol: string, getSymbol: string): string {
+  const [base, quote] = assetsToTradingPairFromSymbols(giveSymbol, getSymbol);
+  return `${base}_${quote}`;
+}
+
 export function assetsToTradingPair(order: Order, useRawAssets: boolean = false): [string, string] {
   const giveSymbol = getAssetSymbol(order.give_asset_info, order.give_asset);
   const getSymbol = getAssetSymbol(order.get_asset_info, order.get_asset);

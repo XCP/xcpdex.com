@@ -49,20 +49,20 @@ export function Orders({ endpoint, status = 'all' }: OrdersProps) {
 
   const buildNextHref = () => {
     if (offset + limit < totalResults) {
-      return `?offset=${offset + limit}`;
+      return `?status=${status}&offset=${offset + limit}`;
     }
     return null;
   };
 
   const buildPreviousHref = () => {
     if (offset > 0) {
-      return `?offset=${Math.max(offset - limit, 0)}`;
+      return `?status=${status}&offset=${Math.max(offset - limit, 0)}`;
     }
     return null;
   };
 
   const buildPageHref = (page: number) => {
-    return `?offset=${(page - 1) * limit}`;
+    return `?status=${status}&offset=${(page - 1) * limit}`;
   };
 
   const renderPageNumbers = () => {

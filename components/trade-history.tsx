@@ -180,15 +180,13 @@ export function TradeHistory({ market, setTradesCount }: TradeHistoryProps) {
               )}
             </TableBody>
           </Table>
-          {totalResults > limit && (
-            <Pagination className="mt-6">
-              <PaginationPrevious href={buildPreviousHref()} />
-              <PaginationList className="hidden lg:flex">
-                {renderPageNumbers()}
-              </PaginationList>
-              <PaginationNext href={buildNextHref()} />
-            </Pagination>
-          )}
+          <Pagination className="mt-6">
+            <PaginationPrevious href={buildPreviousHref()} />
+            <PaginationList className="hidden lg:flex">
+              {renderPageNumbers()}
+            </PaginationList>
+            <PaginationNext href={buildNextHref()} />
+          </Pagination>
         </>
       )}
     </>

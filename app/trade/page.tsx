@@ -9,7 +9,22 @@ import { Dialog, DialogTitle, DialogBody, DialogActions } from '@/components/dia
 
 const address = "19QWXpMXeLkoEKEJv2xo9rn8wkPCyxACSX"; // Hardcoded address for now
 
-const determineTradeSides = (baseAsset, quoteAsset, selectedSellToken) => {
+interface Asset {
+  symbol: string;
+  divisible: boolean;
+  supply: BigNumber;
+}
+
+interface TradeSides {
+  sellAsset: Asset & { side: 'base' | 'quote' };
+  buyAsset: Asset & { side: 'base' | 'quote' };
+}
+
+const determineTradeSides = (
+  baseAsset: Asset | null,
+  quoteAsset: Asset | null,
+  selectedSellToken: string
+): TradeSides => {
   if (baseAsset?.symbol === selectedSellToken) {
     return {
       sellAsset: { side: 'base', ...baseAsset },

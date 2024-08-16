@@ -47,7 +47,7 @@ export function TradeHistory({ market, setTradesCount }: TradeHistoryProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const offset = parseInt(searchParams.get('offset') || '0');
-  const limit = 10; // Number of trades per page
+  const limit = 100; // Number of trades per page
   const currentPage = Math.floor(offset / limit) + 1;
   const totalPages = Math.ceil(totalResults / limit);
 
@@ -65,20 +65,20 @@ export function TradeHistory({ market, setTradesCount }: TradeHistoryProps) {
 
   const buildNextHref = () => {
     if (offset + limit < totalResults) {
-      return `?offset=${offset + limit}`;
+      return `/trade/${market}/matches?offset=${offset + limit}`;
     }
     return null;
   };
 
   const buildPreviousHref = () => {
     if (offset > 0) {
-      return `?offset=${Math.max(offset - limit, 0)}`;
+      return `/trade/${market}/matches?offset=${Math.max(offset - limit, 0)}`;
     }
     return null;
   };
 
   const buildPageHref = (page: number) => {
-    return `?offset=${(page - 1) * limit}`;
+    return `/trade/${market}/matches?offset=${(page - 1) * limit}`;
   };
 
   const renderPageNumbers = () => {

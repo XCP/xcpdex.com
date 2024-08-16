@@ -51,10 +51,10 @@ const TradePage = () => {
   const [isCustomExpiry, setIsCustomExpiry] = useState(false);
   const [sellBalance, setSellBalance] = useState(new BigNumber(0)); // Balance fetched from API
   const [buyBalance, setBuyBalance] = useState(new BigNumber(0)); // Balance for the buy token
-  const [quoteAsset, setQuoteAsset] = useState(null);
-  const [baseAsset, setBaseAsset] = useState(null);
-  const [sellAsset, setSellAsset] = useState(null);
-  const [buyAsset, setBuyAsset] = useState(null);
+  const [quoteAsset, setQuoteAsset] = useState<Asset | null>(null);
+  const [baseAsset, setBaseAsset] = useState<Asset | null>(null);
+  const [sellAsset, setSellAsset] = useState<TradeSides['sellAsset'] | null>(null);
+  const [buyAsset, setBuyAsset] = useState<TradeSides['buyAsset'] | null>(null);
   const [isFlipping, setIsFlipping] = useState(false);
   const [marketRateAvailable, setMarketRateAvailable] = useState(false); // To track if market rate is available
 
@@ -78,7 +78,7 @@ const TradePage = () => {
     fetchMarketData();
   }, [selectedSellToken, selectedBuyToken]);
 
-  const fetchBalance = async (token, setBalanceFunc) => {
+  const fetchBalance = async (token: string, setBalanceFunc: (balance: BigNumber) => void) => {
     try {
       if (token === 'BTC') {
         // Fetch BTC balance from Blockstream API
@@ -114,8 +114,8 @@ const TradePage = () => {
       if (data && data.data) {
         const marketRate = data.data.trading_pair ? new BigNumber(data.data.trading_pair.last_trade_price) : new BigNumber(1);
         setSellRate(marketRate);
-        setBaseAsset(data.data.base_asset);
-        setQuoteAsset(data.data.quote_asset);
+        setBaseAsset(data.data.base_asset as Asset);
+        setQuoteAsset(data.data.quote_asset as Asset);
         setMarketRateAvailable(!!data.data.trading_pair);
       }
     } catch (error) {
@@ -125,27 +125,27 @@ const TradePage = () => {
     }
   };
 
-  const denormalizeAmount = (amount, divisible) => {
+  const denormalizeAmount = (amount: BigNumber, divisible: boolean) => {
     return divisible ? amount.multipliedBy(100000000).toFixed(0) : amount.toFixed(0);
   };
 
-  const validateAmount = (amount, maxSupply) => {
-    if (amount.gt(new BigNumber(maxSupply))) {
+  const validateAmount = (amount: BigNumber, maxSupply: BigNumber) => {
+    if (amount.gt(maxSupply)) {
       alert("Amount exceeds supply!");
       return false;
     }
     return true;
   };
 
-  const updateSellAmount = (sell, rate) => {
-    if (!validateAmount(sell, sellAsset.supply)) return;
+  const updateSellAmount = (sell: BigNumber, rate: BigNumber) => {
+    if (!sellAsset || !validateAmount(sell, sellAsset.supply)) return;
 
     const newBuyAmount = sellAsset.side === 'base' ? sell.multipliedBy(rate) : sell.dividedBy(rate);
     setBuyAmount(newBuyAmount.decimalPlaces(8, BigNumber.ROUND_DOWN));
   };
 
-  const updateBuyAmount = (buy, rate) => {
-    if (!validateAmount(buy, buyAsset.supply)) return;
+  const updateBuyAmount = (buy: BigNumber, rate: BigNumber) => {
+    if (!buyAsset || !validateAmount(buy, buyAsset.supply)) return;
 
     const newSellAmount = buyAsset.side === 'quote' ? buy.dividedBy(rate) : buy.multipliedBy(rate);
     setSellAmount(newSellAmount.decimalPlaces(8, BigNumber.ROUND_DOWN));
@@ -194,7 +194,7 @@ const TradePage = () => {
   };
 
   const handleSetSellAmountToBalance = () => {
-    if (address) {
+    if (address && sellAsset) {
       const formattedBalance = sellBalance.decimalPlaces(8, BigNumber.ROUND_DOWN);
       setSellAmount(formattedBalance);
       updateSellAmount(formattedBalance, sellRate);
@@ -204,7 +204,7 @@ const TradePage = () => {
   };
 
   const handleSetBuyAmountToBalance = () => {
-    if (address) {
+    if (address && buyAsset) {
       const formattedBuyBalance = buyBalance.decimalPlaces(8, BigNumber.ROUND_DOWN);
       setBuyAmount(formattedBuyBalance);
       updateBuyAmount(formattedBuyBalance, sellRate);
@@ -240,11 +240,13 @@ const TradePage = () => {
     return baseAsset && baseAsset.symbol === selectedSellToken ? 'Sell' : 'Buy';
   };
 
-  const formatNumber = (number) => {
-    return new BigNumber(number).toFormat(8, BigNumber.ROUND_DOWN);
+  const formatNumber = (number: BigNumber) => {
+    return number.toFormat(8, BigNumber.ROUND_DOWN);
   };
 
   const composeOrder = async () => {
+    if (!sellAsset || !buyAsset) return;
+
     const normalizedGiveAmount = denormalizeAmount(sellAmount, sellAsset.divisible);
     const normalizedGetAmount = denormalizeAmount(buyAmount, buyAsset.divisible);
 

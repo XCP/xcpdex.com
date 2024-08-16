@@ -58,7 +58,7 @@ const TradePage = () => {
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
-            <label className="block text-gray-700 font-semibold">You're Selling</label>
+            <label className="block text-gray-700 font-semibold">You&apos;re Selling</label>
             <span className="text-gray-500">0 {selectedSellToken}</span>
           </div>
           <div className="flex items-center bg-gray-200 rounded-md p-2 focus-within:ring-2 focus-within:ring-blue-500">
@@ -117,7 +117,7 @@ const TradePage = () => {
 
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
-            <label className="block text-gray-700 font-semibold">You're Buying</label>
+            <label className="block text-gray-700 font-semibold">You&apos;re Buying</label>
             <span className="text-gray-500">0 {selectedBuyToken}</span>
           </div>
           <div className="flex items-center bg-gray-200 rounded-md p-2 focus-within:ring-2 focus-within:ring-blue-500">

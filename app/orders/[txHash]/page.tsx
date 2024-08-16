@@ -12,6 +12,7 @@ import { OrderMatches } from '@/components/order-matches';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/description-list';
 import { BanknotesIcon, CalendarIcon, ChevronLeftIcon, CreditCardIcon } from '@heroicons/react/16/solid';
 import { Order, getTradingPairString, getTradingPairSlug, getTradingDirection, getBaseAssetString, getQuoteAssetString, calculatePrice, calculateAmount, calculateTotal } from '@/utils/tradingPairUtils';
+import { MatchOrder } from '@/components/match-order';
 
 export default function OrderPage({ params }: { params: { txHash: string } }) {
   const { txHash } = params;
@@ -50,8 +51,12 @@ export default function OrderPage({ params }: { params: { txHash: string } }) {
   const quoteAssetSymbol = getQuoteAssetString(order);
   const price = calculatePrice(order);
   const amount = calculateAmount(order);
-  const total = calculateTotal(order);
   const direction = getTradingDirection(order);
+
+  const reciprocalGiveAsset = getQuoteAssetString(order);
+  const reciprocalGiveQuantity = calculateTotal(order);
+  const reciprocalGetAsset = getBaseAssetString(order);
+  const reciprocalGetQuantity = calculateAmount(order);
 
   return (
     <>
@@ -86,7 +91,14 @@ export default function OrderPage({ params }: { params: { txHash: string } }) {
             </span>
           </div>
           <div className="flex gap-4">
-            <Button href="#" outline>Match</Button>
+            <MatchOrder
+              market={order.source}
+              giveAsset={reciprocalGiveAsset}
+              giveQuantity={reciprocalGiveQuantity}
+              getAsset={reciprocalGetAsset}
+              getQuantity={reciprocalGetQuantity}
+              outline
+            />
             <Button href={`https://www.xcp.io/tx/${order.tx_hash}`} target="_blank">XCP.io</Button>
           </div>
         </div>
@@ -113,12 +125,10 @@ export default function OrderPage({ params }: { params: { txHash: string } }) {
               <span className="font-medium no-ligatures">{order.source}</span>
             </Link>
           </DescriptionDetails>
-          <DescriptionTerm>Price</DescriptionTerm>
-          <DescriptionDetails>{price} {quoteAssetSymbol}</DescriptionDetails>
           <DescriptionTerm>Amount</DescriptionTerm>
-          <DescriptionDetails>{amount} {baseAssetSymbol}</DescriptionDetails>
-          <DescriptionTerm>Total</DescriptionTerm>
-          <DescriptionDetails>{total} {quoteAssetSymbol}</DescriptionDetails>
+          <DescriptionDetails className="font-medium">{amount} {baseAssetSymbol}</DescriptionDetails>
+          <DescriptionTerm>Price</DescriptionTerm>
+          <DescriptionDetails className="font-medium">{price} {quoteAssetSymbol}</DescriptionDetails>
         </DescriptionList>
       </div>
       <div className="mt-12">

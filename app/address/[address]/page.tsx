@@ -35,7 +35,9 @@ export default function AddressOrdersPage({ params }: { params: { address: strin
           </Select>
         </div>
       </div>
-      <Orders endpoint={endpoint} status={status} />
+      <div className="mt-8">
+        <Orders endpoint={endpoint} status={status} />
+      </div>
     </>
   );
 }

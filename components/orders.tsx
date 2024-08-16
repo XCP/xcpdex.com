@@ -138,7 +138,7 @@ export function Orders({ endpoint, status = 'all' }: OrdersProps) {
                   : 'zinc';
 
               return (
-                <TableRow key={order.tx_index} href={`/trade/${getTradingPairString(order).replace('/', '_')}`} title={`Order #${order.tx_index}`}>
+                <TableRow key={order.tx_index} href={`/orders/${order.tx_hash}`} title={`Order #${order.tx_index}`}>
                   <TableCell>
                     <Badge color={direction === 'buy' ? 'green' : 'red'} className="capitalize">
                       {direction}

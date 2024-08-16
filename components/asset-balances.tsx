@@ -34,7 +34,7 @@ interface AssetBalancesResponse {
 
 // Function to fetch asset balances
 async function fetchAssetBalances(asset: string): Promise<{ balances: Balance[], count: number }> {
-  const res = await fetch(`https://api.counterparty.info/v2/assets/${asset}/balances?sort=quantity:desc&verbose=true`);
+  const res = await fetch(`https://api.counterparty.info/v2/assets/${asset}/balances?limit=30&sort=quantity:desc&verbose=true`);
   const data: AssetBalancesResponse = await res.json();
   return { balances: data.result, count: data.result_count };
 }
@@ -258,9 +258,9 @@ export function AssetBalances({ asset, issued, setHoldersCount }: AssetBalancesP
                 <TableCell className="text-center" colSpan={6}>No balances found.</TableCell>
               </TableRow>
             )}
-            {resultCount > 100 && (
+            {resultCount > 30 && (
               <TableRow className="font-bold">
-                <TableCell>#101</TableCell>
+                <TableCell>#31</TableCell>
                 <TableCell>Other Addresses</TableCell>
                 <TableCell>{formatAmount(issued - balancesSum)}</TableCell>
                 <TableCell className="text-right">

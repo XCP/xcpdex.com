@@ -12,7 +12,6 @@ import { OrderMatches } from '@/components/order-matches';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/description-list';
 import { BanknotesIcon, CalendarIcon, ChevronLeftIcon, CreditCardIcon } from '@heroicons/react/16/solid';
 import { Order, getTradingPairString, getTradingPairSlug, getTradingDirection, getBaseAssetString, getQuoteAssetString, calculatePrice, calculateAmount, calculateTotal } from '@/utils/tradingPairUtils';
-import { MatchOrder } from '@/components/match-order';
 
 export default function OrderPage({ params }: { params: { txHash: string } }) {
   const { txHash } = params;

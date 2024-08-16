@@ -1,36 +1,63 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import BigNumber from 'bignumber.js';
 import { ArrowsUpDownIcon, ChevronDownIcon, Cog6ToothIcon } from '@heroicons/react/16/solid';
 import { assetsToTradingPairFromSymbols } from '@/utils/tradingPairUtils';
 import { Button } from '@/components/button';
-import { Dialog, DialogTitle, DialogDescription, DialogBody, DialogActions } from '@/components/dialog';
+import { Dialog, DialogTitle, DialogBody, DialogActions } from '@/components/dialog';
 
 const address = "19QWXpMXeLkoEKEJv2xo9rn8wkPCyxACSX"; // Hardcoded address for now
+
+const determineTradeSides = (baseAsset, quoteAsset, selectedSellToken) => {
+  if (baseAsset?.symbol === selectedSellToken) {
+    return {
+      sellAsset: { side: 'base', ...baseAsset },
+      buyAsset: { side: 'quote', ...quoteAsset },
+    };
+  } else {
+    return {
+      sellAsset: { side: 'quote', ...quoteAsset },
+      buyAsset: { side: 'base', ...baseAsset },
+    };
+  }
+};
 
 const TradePage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTokenFor, setSelectedTokenFor] = useState<'sell' | 'buy' | null>(null);
   const [selectedSellToken, setSelectedSellToken] = useState('XCP');
   const [selectedBuyToken, setSelectedBuyToken] = useState('BTC');
-  const [sellAmount, setSellAmount] = useState(10114.848);
-  const [buyAmount, setBuyAmount] = useState(0);
-  const [sellRate, setSellRate] = useState(1); // Initial rate
+  const [sellAmount, setSellAmount] = useState(new BigNumber(0));
+  const [buyAmount, setBuyAmount] = useState(new BigNumber(0));
+  const [sellRate, setSellRate] = useState(new BigNumber(1)); // Initial rate
   const [expiry, setExpiry] = useState('8064');
   const [customExpiry, setCustomExpiry] = useState('8064');
   const [isCustomExpiry, setIsCustomExpiry] = useState(false);
-  const [balance, setBalance] = useState(0); // Balance fetched from API
-  const [buyBalance, setBuyBalance] = useState(0); // Balance for the buy token
+  const [sellBalance, setSellBalance] = useState(new BigNumber(0)); // Balance fetched from API
+  const [buyBalance, setBuyBalance] = useState(new BigNumber(0)); // Balance for the buy token
   const [quoteAsset, setQuoteAsset] = useState(null);
   const [baseAsset, setBaseAsset] = useState(null);
+  const [sellAsset, setSellAsset] = useState(null);
+  const [buyAsset, setBuyAsset] = useState(null);
   const [isFlipping, setIsFlipping] = useState(false);
   const [marketRateAvailable, setMarketRateAvailable] = useState(false); // To track if market rate is available
 
   const tokens = ['BTC', 'XCP', 'PEPECASH', 'BITCORN', 'BITCRYSTALS', 'DANKMEMECASH'];
 
+  // Effect to update trade sides whenever selected tokens or market data change
+  useEffect(() => {
+    if (baseAsset && quoteAsset) {
+      const { sellAsset, buyAsset } = determineTradeSides(baseAsset, quoteAsset, selectedSellToken);
+      setSellAsset(sellAsset);
+      setBuyAsset(buyAsset);
+    }
+  }, [selectedSellToken, selectedBuyToken, baseAsset, quoteAsset]);
+
+  // Effect to fetch balances and market data when tokens change
   useEffect(() => {
     if (address) {
-      fetchBalance(selectedSellToken, setBalance);
+      fetchBalance(selectedSellToken, setSellBalance);
       fetchBalance(selectedBuyToken, setBuyBalance);
     }
     fetchMarketData();
@@ -38,15 +65,29 @@ const TradePage = () => {
 
   const fetchBalance = async (token, setBalanceFunc) => {
     try {
-      const response = await fetch(`https://api.counterparty.info/v2/addresses/${address}/balances/${token}?verbose=true`);
-      const data = await response.json();
-      if (data.error) {
-        setBalanceFunc(0); // Set to 0 if API returns error
+      if (token === 'BTC') {
+        // Fetch BTC balance from Blockstream API
+        const response = await fetch(`https://blockstream.info/api/address/${address}`);
+        const btcData = await response.json();
+  
+        // Calculate BTC balance in BTC (not in satoshis)
+        const balanceInBTC = new BigNumber(btcData.chain_stats.funded_txo_sum)
+          .minus(btcData.chain_stats.spent_txo_sum)
+          .dividedBy(100000000); // Convert satoshis to BTC
+  
+        setBalanceFunc(balanceInBTC);
       } else {
-        setBalanceFunc(parseFloat(data.result.quantity_normalized));
+        // Fetch balance for other tokens using Counterparty API
+        const response = await fetch(`https://api.counterparty.info/v2/addresses/${address}/balances/${token}?verbose=true`);
+        const data = await response.json();
+        if (data.error) {
+          setBalanceFunc(new BigNumber(0)); // Set to 0 if API returns error
+        } else {
+          setBalanceFunc(new BigNumber(data.result.quantity_normalized));
+        }
       }
     } catch (error) {
-      setBalanceFunc(0); // Set to 0 in case of fetch error
+      setBalanceFunc(new BigNumber(0)); // Set to 0 in case of fetch error
     }
   };
 
@@ -56,60 +97,61 @@ const TradePage = () => {
       const response = await fetch(`https://api.xcp.io/api/v1/swap/${base}/${quote}`);
       const data = await response.json();
       if (data && data.data) {
-        const marketRate = data.data.trading_pair ? parseFloat(data.data.trading_pair.last_trade_price) : 1;
+        const marketRate = data.data.trading_pair ? new BigNumber(data.data.trading_pair.last_trade_price) : new BigNumber(1);
         setSellRate(marketRate);
         setBaseAsset(data.data.base_asset);
         setQuoteAsset(data.data.quote_asset);
-        updateSellAmount(sellAmount, marketRate, data.data.base_asset.asset === selectedSellToken);
-        setMarketRateAvailable(data.data.trading_pair ? true : false);
+        setMarketRateAvailable(!!data.data.trading_pair);
       }
     } catch (error) {
       console.error('Failed to fetch market data', error);
-      setSellRate(1); // Default to 1 if market rate can't be fetched
+      setSellRate(new BigNumber(1)); // Default to 1 if market rate can't be fetched
       setMarketRateAvailable(false);
     }
   };
 
   const denormalizeAmount = (amount, divisible) => {
-    return divisible ? Math.round(amount * 100000000) : Math.round(amount);
+    return divisible ? amount.multipliedBy(100000000).toFixed(0) : amount.toFixed(0);
   };
 
-  const updateSellAmount = (sell, rate, isBaseSell) => {
-    if (isBaseSell) {
-      const newBuyAmount = sell * rate;
-      setBuyAmount(newBuyAmount);
-    } else {
-      const newBuyAmount = sell / rate;
-      setBuyAmount(newBuyAmount);
+  const validateAmount = (amount, maxSupply) => {
+    if (amount.gt(new BigNumber(maxSupply))) {
+      alert("Amount exceeds supply!");
+      return false;
     }
+    return true;
   };
 
-  const updateBuyAmount = (buy, rate, isBaseSell) => {
-    if (isBaseSell) {
-      const newSellAmount = buy / rate;
-      setSellAmount(newSellAmount);
-    } else {
-      const newSellAmount = buy * rate;
-      setSellAmount(newSellAmount);
-    }
+  const updateSellAmount = (sell, rate) => {
+    if (!validateAmount(sell, sellAsset.supply)) return;
+
+    const newBuyAmount = sellAsset.side === 'base' ? sell.multipliedBy(rate) : sell.dividedBy(rate);
+    setBuyAmount(newBuyAmount.decimalPlaces(8, BigNumber.ROUND_DOWN));
+  };
+
+  const updateBuyAmount = (buy, rate) => {
+    if (!validateAmount(buy, buyAsset.supply)) return;
+
+    const newSellAmount = buyAsset.side === 'quote' ? buy.dividedBy(rate) : buy.multipliedBy(rate);
+    setSellAmount(newSellAmount.decimalPlaces(8, BigNumber.ROUND_DOWN));
   };
 
   const handleSellAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newSellAmount = parseFloat(e.target.value);
-    setSellAmount(newSellAmount);
-    updateSellAmount(newSellAmount, sellRate, baseAsset?.symbol === selectedSellToken);
+    const newSellAmount = new BigNumber(e.target.value);
+    setSellAmount(newSellAmount.decimalPlaces(8, BigNumber.ROUND_DOWN));
+    updateSellAmount(newSellAmount, sellRate);
   };
 
   const handleBuyAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newBuyAmount = parseFloat(e.target.value);
-    setBuyAmount(newBuyAmount);
-    updateBuyAmount(newBuyAmount, sellRate, baseAsset?.symbol === selectedSellToken);
+    const newBuyAmount = new BigNumber(e.target.value);
+    setBuyAmount(newBuyAmount.decimalPlaces(8, BigNumber.ROUND_DOWN));
+    updateBuyAmount(newBuyAmount, sellRate);
   };
 
   const handleRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newRate = parseFloat(e.target.value);
+    const newRate = new BigNumber(e.target.value);
     setSellRate(newRate);
-    updateSellAmount(sellAmount, newRate, baseAsset?.symbol === selectedSellToken);
+    updateSellAmount(sellAmount, newRate);
   };
 
   const handleFlip = () => {
@@ -138,19 +180,21 @@ const TradePage = () => {
 
   const handleSetSellAmountToBalance = () => {
     if (address) {
-      setSellAmount(balance);
-      updateSellAmount(balance, sellRate, baseAsset?.symbol === selectedSellToken);
+      const formattedBalance = sellBalance.decimalPlaces(8, BigNumber.ROUND_DOWN);
+      setSellAmount(formattedBalance);
+      updateSellAmount(formattedBalance, sellRate);
     } else {
-      setSellAmount(0);
+      setSellAmount(new BigNumber(0));
     }
   };
 
   const handleSetBuyAmountToBalance = () => {
     if (address) {
-      setBuyAmount(buyBalance);
-      updateBuyAmount(buyBalance, sellRate, baseAsset?.symbol === selectedSellToken);
+      const formattedBuyBalance = buyBalance.decimalPlaces(8, BigNumber.ROUND_DOWN);
+      setBuyAmount(formattedBuyBalance);
+      updateBuyAmount(formattedBuyBalance, sellRate);
     } else {
-      setBuyAmount(0);
+      setBuyAmount(new BigNumber(0));
     }
   };
 
@@ -160,7 +204,8 @@ const TradePage = () => {
 
   const toggleCustomExpiry = () => {
     if (isCustomExpiry) {
-      setExpiry('8064');
+      const matchingPreset = ['8064', '4032', '1008', '144'].find(preset => preset === customExpiry);
+      setExpiry(matchingPreset || '8064');
     } else {
       setCustomExpiry(expiry);
     }
@@ -180,36 +225,21 @@ const TradePage = () => {
     return baseAsset && baseAsset.symbol === selectedSellToken ? 'Sell' : 'Buy';
   };
 
+  const formatNumber = (number) => {
+    return new BigNumber(number).toFormat(8, BigNumber.ROUND_DOWN);
+  };
+
   const composeOrder = async () => {
-    let normalizedGiveAmount;
-    let normalizedGetAmount;
-    let giveAsset;
-    let getAsset;
+    const normalizedGiveAmount = denormalizeAmount(sellAmount, sellAsset.divisible);
+    const normalizedGetAmount = denormalizeAmount(buyAmount, buyAsset.divisible);
 
-    if (baseAsset?.symbol === selectedSellToken) {
-        // If the sell token is the base asset
-        normalizedGiveAmount = denormalizeAmount(sellAmount, baseAsset?.divisible);
-        normalizedGetAmount = denormalizeAmount(buyAmount, quoteAsset?.divisible);
-        giveAsset = selectedSellToken;
-        getAsset = selectedBuyToken;
-    } else {
-        // If the sell token is the quote asset
-        normalizedGiveAmount = denormalizeAmount(sellAmount, quoteAsset?.divisible);
-        normalizedGetAmount = denormalizeAmount(buyAmount, baseAsset?.divisible);
-        giveAsset = selectedSellToken;
-        getAsset = selectedBuyToken;
-    }
-
-    // Define the fee_required parameter
-    const feeRequired = selectedBuyToken === 'BTC' ? 100 : 0; // Adjust the value based on your needs
-
-    const response = await fetch(`https://api.counterparty.info/v2/addresses/${address}/compose/order?give_asset=${selectedSellToken}&give_quantity=${normalizedSellAmount}&get_asset=${selectedBuyToken}&get_quantity=${normalizedBuyAmount}&expiration=${expiry}&fee_required=${feeRequired}`, {
+    const response = await fetch(`https://api.counterparty.info/v2/addresses/${address}/compose/order?give_asset=${sellAsset.symbol}&give_quantity=${normalizedGiveAmount}&get_asset=${buyAsset.symbol}&get_quantity=${normalizedGetAmount}&expiration=${expiry}`, {
       method: 'GET',
     });
 
     const result = await response.json();
     console.log(result); // Handle the response or errors accordingly
-};
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -218,7 +248,7 @@ const TradePage = () => {
           <div className="flex justify-between items-center mb-2">
             <label className="block text-gray-700 font-semibold">You&apos;re Selling</label>
             <span className="text-gray-500 cursor-pointer" onClick={handleSetSellAmountToBalance}>
-              {balance} {selectedSellToken}
+              {formatNumber(sellBalance)} {selectedSellToken}
             </span>
           </div>
           <div className="flex items-center bg-gray-200 rounded-md p-2 focus-within:ring-2 focus-within:ring-blue-500">
@@ -232,11 +262,11 @@ const TradePage = () => {
             </button>
             <input
               type="number"
-              min={baseAsset?.divisible ? "0.00000001" : "1"}
-              max={baseAsset?.supply || "1000000000"}
-              step={baseAsset?.divisible ? "0.00000001" : "1"}
+              min={sellAsset?.divisible ? "0.00000001" : "1"}
+              max={sellAsset?.supply || "1000000000"}
+              step={sellAsset?.divisible ? "0.00000001" : "1"}
               className="flex-1 text-right font-medium text-lg bg-transparent focus:outline-none focus:ring-0 focus:border-transparent border-none appearance-none"
-              value={sellAmount}
+              value={sellAmount.toFixed(8)}
               onChange={handleSellAmountChange}
             />
           </div>
@@ -255,11 +285,12 @@ const TradePage = () => {
                 <input
                   type="number"
                   min="0.00000001"
+                  step="0.00000001"
                   className="flex-1 font-medium text-right bg-transparent focus:outline-none focus:ring-0 focus:border-transparent border-none appearance-none h-10"
-                  value={sellRate.toFixed(10)}
+                  value={sellRate.toFixed(8)}
                   onChange={handleRateChange}
                 />
-                <span className="text-gray-700 flex items-center w-6 mr-2">
+                <span className="text-gray-700 flex items-center w-6 mr-1">
                   <img src={`http://api.xcp.io/img/icon/${getIcon()}`} alt={getIcon()} className="size-5" /> 
                 </span>
               </div>
@@ -299,7 +330,7 @@ const TradePage = () => {
           </div>
         </div>
 
-        <div className="flex justify-center">
+        <div className="flex justify-center mb-4">
           <Button onClick={handleFlip} color={'light'} className="cursor-pointer" disabled={isFlipping}>
             <ArrowsUpDownIcon className="w-6 h-6 text-gray-700" />
           </Button>
@@ -309,7 +340,7 @@ const TradePage = () => {
           <div className="flex justify-between items-center mb-2">
             <label className="block text-gray-700 font-semibold">You&apos;re Buying</label>
             <span className="text-gray-500 cursor-pointer" onClick={handleSetBuyAmountToBalance}>
-              {buyBalance} {selectedBuyToken}
+              {formatNumber(buyBalance)} {selectedBuyToken}
             </span>
           </div>
           <div className="flex items-center bg-gray-200 rounded-md p-2 focus-within:ring-2 focus-within:ring-blue-500">
@@ -323,11 +354,11 @@ const TradePage = () => {
             </button>
             <input
               type="number"
-              min={quoteAsset?.divisible ? "0.00000001" : "1"}
-              max={quoteAsset?.supply || "1000000000"}
-              step={quoteAsset?.divisible ? "0.00000001" : "1"}
+              min={buyAsset?.divisible ? "0.00000001" : "1"}
+              max={buyAsset?.supply || "1000000000"}
+              step={buyAsset?.divisible ? "0.00000001" : "1"}
               className="flex-1 text-right font-medium text-lg bg-transparent focus:outline-none focus:ring-0 focus:border-transparent border-none appearance-none"
-              value={buyAmount}
+              value={buyAmount.toFixed(8)}
               onChange={handleBuyAmountChange}
             />
           </div>

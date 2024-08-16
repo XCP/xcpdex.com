@@ -91,14 +91,6 @@ export default function OrderPage({ params }: { params: { txHash: string } }) {
             </span>
           </div>
           <div className="flex gap-4">
-            <MatchOrder
-              market={order.source}
-              giveAsset={reciprocalGiveAsset}
-              giveQuantity={reciprocalGiveQuantity}
-              getAsset={reciprocalGetAsset}
-              getQuantity={reciprocalGetQuantity}
-              outline
-            />
             <Button href={`https://www.xcp.io/tx/${order.tx_hash}`} target="_blank">XCP.io</Button>
           </div>
         </div>

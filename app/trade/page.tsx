@@ -25,7 +25,11 @@ const determineTradeSides = (
   quoteAsset: Asset | null,
   selectedSellToken: string
 ): TradeSides => {
-  if (baseAsset?.symbol === selectedSellToken) {
+  if (!baseAsset || !quoteAsset) {
+    throw new Error("Assets must be defined");
+  }
+
+  if (baseAsset.symbol === selectedSellToken) {
     return {
       sellAsset: { side: 'base', ...baseAsset },
       buyAsset: { side: 'quote', ...quoteAsset },

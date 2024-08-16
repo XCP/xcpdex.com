@@ -5,7 +5,6 @@ import { Button } from '@/components/button';
 import { Dialog, DialogActions, DialogBody, DialogDescription, DialogTitle } from '@/components/dialog';
 import { Field, FieldGroup, Label } from '@/components/fieldset';
 import { Input } from '@/components/input';
-import { Select } from '@/components/select';
 
 export function MatchOrder({
   market,
@@ -50,10 +49,10 @@ export function MatchOrder({
 
   return (
     <>
-      <Button type="button" onClick={() => setIsOpen(true)} {...props}>
+      <Button type="button" onClick={() => setIsOpen(true)} outline {...props}>
         Match
       </Button>
-      <Dialog open={isOpen} onClose={setIsOpen}>
+      <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
         <DialogTitle>Match Order</DialogTitle>
         <DialogDescription>
           Review and confirm the order details before proceeding with the match.

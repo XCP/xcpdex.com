@@ -25,6 +25,7 @@ interface Trade {
   price_usd: string | null;
   volume: string;
   link: string;
+  address: string;
   confirmed_at: number;
 }
 
@@ -129,7 +130,7 @@ export function TradeHistory({ market, setTradesCount }: TradeHistoryProps) {
                 <TableHeader className="w-14">Side</TableHeader>
                 <TableHeader>Amount</TableHeader>
                 <TableHeader>Price</TableHeader>
-                <TableHeader>Link</TableHeader>
+                <TableHeader>Maker</TableHeader>
                 <TableHeader>Time</TableHeader>
               </TableRow>
             </TableHead>
@@ -162,7 +163,7 @@ export function TradeHistory({ market, setTradesCount }: TradeHistoryProps) {
                         </div>
                       </TableCell>
                       <TableCell className="no-ligatures">
-                        {formatTradeType(trade.type)}
+                        {trade.address ?? formatTradeType(trade.type)}
                       </TableCell>
                       <TableCell className="text-zinc-500">
                         {formatTimeAgo(trade.confirmed_at)}

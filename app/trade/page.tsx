@@ -12,7 +12,7 @@ const address = "19QWXpMXeLkoEKEJv2xo9rn8wkPCyxACSX"; // Hardcoded address for n
 interface Asset {
   symbol: string;
   divisible: boolean;
-  supply: BigNumber;
+  supply: number;
 }
 
 interface TradeSides {

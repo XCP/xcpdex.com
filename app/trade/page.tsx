@@ -12,7 +12,7 @@ const address = "19QWXpMXeLkoEKEJv2xo9rn8wkPCyxACSX"; // Hardcoded address for n
 interface Asset {
   symbol: string;
   divisible: boolean;
-  supply: number;
+  supply: BigNumber;
 }
 
 interface TradeSides {
@@ -284,7 +284,7 @@ const TradePage = () => {
             <input
               type="number"
               min={sellAsset?.divisible ? "0.00000001" : "1"}
-              max={sellAsset?.supply || "1000000000"}
+              max={sellAsset?.supply.toString() || "1000000000"}
               step={sellAsset?.divisible ? "0.00000001" : "1"}
               className="flex-1 text-right font-medium text-lg bg-transparent focus:outline-none focus:ring-0 focus:border-transparent border-none appearance-none"
               value={sellAmount.toFixed(8)}
@@ -376,7 +376,7 @@ const TradePage = () => {
             <input
               type="number"
               min={buyAsset?.divisible ? "0.00000001" : "1"}
-              max={buyAsset?.supply || "1000000000"}
+              max={buyAsset?.supply.toString() || "1000000000"}
               step={buyAsset?.divisible ? "0.00000001" : "1"}
               className="flex-1 text-right font-medium text-lg bg-transparent focus:outline-none focus:ring-0 focus:border-transparent border-none appearance-none"
               value={buyAmount.toFixed(8)}

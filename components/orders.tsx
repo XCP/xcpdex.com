@@ -29,9 +29,9 @@ export function Orders({ endpoint, status = 'all' }: OrdersProps) {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const offset = parseInt(searchParams.get('offset') || '0');
+  const currentPage = parseInt(searchParams.get('page') || '1');
   const limit = 100; // Number of orders per page
-  const currentPage = Math.floor(offset / limit) + 1;
+  const offset = (currentPage * 100) - 100;
   const totalPages = Math.ceil(totalResults / limit);
 
   useEffect(() => {
@@ -49,20 +49,20 @@ export function Orders({ endpoint, status = 'all' }: OrdersProps) {
 
   const buildNextHref = () => {
     if (offset + limit < totalResults) {
-      return `?status=${status}&offset=${offset + limit}`;
+      return `?status=${status}&page=${currentPage + 1}`;
     }
     return null;
   };
 
   const buildPreviousHref = () => {
     if (offset > 0) {
-      return `?status=${status}&offset=${Math.max(offset - limit, 0)}`;
+      return `?status=${status}&page=${Math.max(currentPage - 1, 1)}`;
     }
     return null;
   };
 
   const buildPageHref = (page: number) => {
-    return `?status=${status}&offset=${(page - 1) * limit}`;
+    return `?status=${status}&page=${(page)}`;
   };
 
   const renderPageNumbers = () => {

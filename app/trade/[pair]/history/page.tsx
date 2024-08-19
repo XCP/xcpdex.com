@@ -1,22 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Divider } from '@/components/divider';
+import { Avatar } from '@/components/avatar';
 import { Heading } from '@/components/heading';
 import { Button } from '@/components/button';
 import { Link } from '@/components/link';
 import { OrderMatches } from '@/components/order-matches';
 import { TradeHistory } from '@/components/trade-history';
-import { ArrowPathIcon, ChevronLeftIcon, CheckBadgeIcon } from '@heroicons/react/16/solid';
-import {
-  Pagination,
-  PaginationGap,
-  PaginationList,
-  PaginationNext,
-  PaginationPage,
-  PaginationPrevious,
-} from '@/components/pagination';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { ArrowPathIcon, ChevronLeftIcon } from '@heroicons/react/16/solid';
+import { Strong, Text } from '@/components/text'
 
 interface TradeMatchesPageParams {
   params: {
@@ -91,12 +83,12 @@ export default function TradeMatchesPage({ params }: TradeMatchesPageParams) {
           <div>
             <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
               <Heading>{market}</Heading>
-              <CheckBadgeIcon className="size-5 text-blue-500" />
+              <Avatar src={`https://api.xcp.io/img/icon/${pairData?.quote_asset.symbol}`} className="size-5" />
             </div>
             {pairData?.last_trade_date && (
-              <div className="mt-2 text-sm/6 text-zinc-500">
-                Last traded on {new Date(pairData.last_trade_date * 1000).toLocaleDateString()}{' '}
-              </div>
+              <Text className="mt-2">
+                Last traded on <Strong>{new Date(pairData.last_trade_date * 1000).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'})}</Strong>
+              </Text>
             )}
           </div>
         </div>

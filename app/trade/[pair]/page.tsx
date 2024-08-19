@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Divider } from '@/components/divider';
 import { Heading } from '@/components/heading';
+import { Avatar } from '@/components/avatar';
 import { Button } from '@/components/button';
 import { Link } from '@/components/link';
 import { Stat } from '@/components/stat';
@@ -17,6 +18,7 @@ import { ChevronLeftIcon, PresentationChartBarIcon, PresentationChartLineIcon, C
 import { Navbar, NavbarItem, NavbarSection } from '@/components/navbar';
 import { formatAmount } from '@/utils/formatAmount';
 import { formatTradeType } from '@/utils/formatTradeType';
+import { Strong, Text } from '@/components/text'
 
 interface TradePageParams {
   params: {
@@ -103,15 +105,12 @@ export default function TradePage({ params }: TradePageParams) {
           <div>
             <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
               <Heading>{market}</Heading>
-              <CheckBadgeIcon className="size-5 text-blue-500"/>
+              <Avatar src={`https://api.xcp.io/img/icon/${pairData?.quote_asset.symbol}`} className="size-5" />
             </div>
             {pairData?.last_trade_date && (
-              <div className="mt-2 text-sm/6 text-zinc-500">
-                Last traded on {new Date(pairData.last_trade_date * 1000).toLocaleDateString()} <span aria-hidden="true">·</span>{' '}
-                <a href={pairData.last_trade_link} target="_blank" rel="noopener noreferrer">
-                  {formatTradeType(pairData?.last_trade_type ?? 'Unknown')}
-                </a>
-              </div>
+              <Text className="mt-2">
+                Last traded on <Strong>{new Date(pairData.last_trade_date * 1000).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'})}</Strong>
+              </Text>
             )}
           </div>
         </div>

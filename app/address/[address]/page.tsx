@@ -26,7 +26,7 @@ export default function AddressOrdersPage({ params }: { params: { address: strin
           </div>
         </div>
         <div className="w-full lg:w-auto mt-4 lg:mt-0">
-          <StatusSelect status={status} setStatus={setStatus} basePath={`/address/${address}/orders`} />
+          <StatusSelect status={status} setStatus={setStatus} basePath={`/address/${address}`} />
         </div>
       </div>
       <div className="mt-8">

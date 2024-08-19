@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import BigNumber from 'bignumber.js';
 import { Avatar } from '@/components/avatar';
 import { Badge } from '@/components/badge';
 import { Button } from '@/components/button';
@@ -10,7 +9,7 @@ import { Heading, Subheading } from '@/components/heading';
 import { Link } from '@/components/link';
 import { OrderMatches } from '@/components/order-matches';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/description-list';
-import { BanknotesIcon, CalendarIcon, ChevronLeftIcon, CreditCardIcon } from '@heroicons/react/16/solid';
+import { CalendarIcon, ChevronLeftIcon } from '@heroicons/react/16/solid';
 import { Order, getTradingPairString, getTradingPairSlug, getTradingDirection, getBaseAssetString, getQuoteAssetString, calculatePrice, calculateAmount, calculateTotal } from '@/utils/tradingPairUtils';
 
 export default function OrderPage({ params }: { params: { txHash: string } }) {

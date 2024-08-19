@@ -33,8 +33,8 @@ interface TradeHistoryProps {
   setTradesCount: (count: number) => void;
 }
 
-async function fetchTrades(market: string, limit: number, offset: number): Promise<{ trades: Trade[], count: number }> {
-  const res = await fetch(`https://api.xcp.io/api/v1/trading-pair/${market}/trades?limit=${limit}&offset=${offset}`);
+async function fetchTrades(market: string, page: number): Promise<{ trades: Trade[], count: number }> {
+  const res = await fetch(`https://api.xcp.io/api/v1/trading-pair/${market}/trades?page=${page}`);
   const data = await res.json();
   return { trades: data.result, count: data.result_count };
 }
@@ -46,49 +46,48 @@ export function TradeHistory({ market, setTradesCount }: TradeHistoryProps) {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const offset = parseInt(searchParams.get('offset') || '0');
+  const page = parseInt(searchParams.get('page') || '1');
   const limit = 100; // Number of trades per page
-  const currentPage = Math.floor(offset / limit) + 1;
   const totalPages = Math.ceil(totalResults / limit);
 
   useEffect(() => {
     async function loadTrades() {
       setLoading(true);
-      const { trades, count } = await fetchTrades(market, limit, offset);
+      const { trades, count } = await fetchTrades(market, page);
       setTrades(trades);
       setTradesCount(count);
       setTotalResults(count);
       setLoading(false);
     }
     loadTrades();
-  }, [market, setTradesCount, offset]);
+  }, [market, setTradesCount, page]);
 
   const buildNextHref = () => {
-    if (offset + limit < totalResults) {
-      return `/trade/${market}/matches?offset=${offset + limit}`;
+    if (page < totalPages) {
+      return `/trade/${market}/history?page=${page + 1}`;
     }
     return null;
   };
 
   const buildPreviousHref = () => {
-    if (offset > 0) {
-      return `/trade/${market}/matches?offset=${Math.max(offset - limit, 0)}`;
+    if (page > 1) {
+      return `/trade/${market}/history?page=${page - 1}`;
     }
     return null;
   };
 
   const buildPageHref = (page: number) => {
-    return `/trade/${market}/matches?offset=${(page - 1) * limit}`;
+    return `/trade/${market}/history?page=${page}`;
   };
 
   const renderPageNumbers = () => {
     const pages = [];
-    const startPage = Math.max(1, currentPage - 2);
-    const endPage = Math.min(totalPages, currentPage + 2);
+    const startPage = Math.max(1, page - 2);
+    const endPage = Math.min(totalPages, page + 2);
 
     for (let i = startPage; i <= endPage; i++) {
       pages.push(
-        <PaginationPage href={buildPageHref(i)} current={i === currentPage} key={i}>
+        <PaginationPage href={buildPageHref(i)} current={i === page} key={i}>
           {i}
         </PaginationPage>
       );
@@ -180,13 +179,15 @@ export function TradeHistory({ market, setTradesCount }: TradeHistoryProps) {
               )}
             </TableBody>
           </Table>
-          <Pagination className="mt-6">
-            <PaginationPrevious href={buildPreviousHref()} />
-            <PaginationList className="hidden lg:flex">
-              {renderPageNumbers()}
-            </PaginationList>
-            <PaginationNext href={buildNextHref()} />
-          </Pagination>
+          {totalResults > 100 && (
+            <Pagination className="mt-6">
+              <PaginationPrevious href={buildPreviousHref()} />
+              <PaginationList className="hidden lg:flex">
+                {renderPageNumbers()}
+              </PaginationList>
+              <PaginationNext href={buildNextHref()} />
+            </Pagination>
+          )}
         </>
       )}
     </>

@@ -7,12 +7,9 @@ import { Suspense, useState } from 'react';
 import { ArrowPathIcon } from '@heroicons/react/16/solid';
 import { useSearchParams } from 'next/navigation';
 
-export default function OrdersPage() {
+function OrdersContent() {
   const searchParams = useSearchParams();
-
-  // Initialize status from the URL if it exists, otherwise default to 'all'
   const [status, setStatus] = useState(searchParams.get('status') || 'all');
-  
   const endpoint = 'https://api.counterparty.info/v2/orders';
 
   return (
@@ -23,6 +20,14 @@ export default function OrdersPage() {
           <StatusSelect status={status} setStatus={setStatus} basePath="/orders" />
         </div>
       </div>
+      <Orders endpoint={endpoint} status={status} />
+    </>
+  );
+}
+
+export default function OrdersPage() {
+  return (
+    <>
       <Suspense
         fallback={
           <div className="flex flex-col justify-center items-center h-48 my-24">
@@ -30,7 +35,7 @@ export default function OrdersPage() {
           </div>
         }
       >
-        <Orders endpoint={endpoint} status={status} />
+        <OrdersContent />
       </Suspense>
     </>
   );

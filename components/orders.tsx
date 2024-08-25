@@ -20,7 +20,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 interface OrdersProps {
   endpoint: string;
   status?: string;
-  context?: 'orders';
+  context?: string;
 }
 
 export function Orders({ endpoint, status = 'all', context }: OrdersProps) {

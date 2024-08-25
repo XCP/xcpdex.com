@@ -78,7 +78,7 @@ export default function TradingPairsPage() {
             <Heading>XCP Dex</Heading>
             <Avatar src={`https://api.xcp.io/img/icon/XCP`} className="size-5" />
           </div>
-          <Text className="mt-2">Trade Crypto Peer-to-Peer.</Text>
+          <Text className="mt-2">Trade Assets Peer-to-Peer.</Text>
         </div>
         <div className="flex gap-4">
           <Button href="#" outline>Trade</Button>

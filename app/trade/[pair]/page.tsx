@@ -138,7 +138,7 @@ export default function TradePage({ params }: TradePageParams) {
           <Button href={`https://www.xcp.io/asset/${pairData?.base_asset.asset}`} target="_blank">XCP.io</Button>
         </div>
       </div>
-      <div className="grid gap-6 sm:gap-8 grid-cols-3 sm:grid-cols-4">
+      <div className="grid gap-6 sm:gap-8 grid-cols-3 2xl:grid-cols-4">
         {pairData ? (
           <>
             <Stat
@@ -166,10 +166,10 @@ export default function TradePage({ params }: TradePageParams) {
               }
               value={
                 parseFloat(pairData?.volume_7d_usd || '0') > 0 
-                  ? `$${formatAmount(pairData.volume_7d_usd, true)}`
+                  ? `$${formatAmount(pairData.volume_7d_usd || '0', true)}`
                   : parseFloat(pairData?.volume_30d_usd || '0') > 0 
-                    ? `$${formatAmount(pairData.volume_30d_usd, true)}`
-                    : `$${formatAmount(pairData.volume_all_usd, true)}`
+                    ? `$${formatAmount(pairData.volume_30d_usd || '0', true)}`
+                    : `$${formatAmount(pairData.volume_all_usd || '0', true)}`
               }
               subvalue={
                 parseFloat(pairData?.volume_7d || '0') > 0 
@@ -178,7 +178,7 @@ export default function TradePage({ params }: TradePageParams) {
                     ? `${formatAmount(pairData.volume_30d || '0')} ${pairData.base_asset.symbol}`
                     : `${formatAmount(pairData.volume_all || '0')} ${pairData.base_asset.symbol}`
               }
-              className="hidden sm:block"
+              className="hidden 2xl:block"
             />
             <Stat
               title="Market Cap"

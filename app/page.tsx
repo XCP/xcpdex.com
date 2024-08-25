@@ -152,8 +152,8 @@ export default function TradingPairsPage() {
                   <TableRow key={pair.slug} href={`/trade/${pair.slug}`}>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Avatar src={`https://api.xcp.io/img/icon/${pair.slug.split('_')[0]}`} className="size-6" />
-                        <span className="font-medium">{pair.slug.split('_')[0]}</span>
+                        <Avatar src={`https://api.xcp.io/img/icon/${pair.slug.substring(0, pair.slug.lastIndexOf('_'))}`} className="size-6" />
+                        <span className="font-medium">{pair.slug.substring(0, pair.slug.lastIndexOf('_'))}</span>
                       </div>
                     </TableCell>
                     <TableCell>

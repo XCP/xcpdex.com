@@ -41,7 +41,8 @@ export function OrderMatches({ market, setTradesCount, direction }: OrderMatches
   const [matches, setMatches] = useState<OrderMatch[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalResults, setTotalResults] = useState<number>(0);
-  const tradingPair = market.replace('/', '_');
+  const lastUnderscoreIndex = market.lastIndexOf('/');
+  const tradingPair = market.substring(0, lastUnderscoreIndex) + '_' + market.substring(lastUnderscoreIndex + 1);
 
   const router = useRouter();
   const searchParams = useSearchParams();

@@ -9,7 +9,8 @@ interface AreaChartProps {
 }
 
 const AreaChart: React.FC<AreaChartProps> = ({ pairSlug, interval }) => {
-  const market = pairSlug.replace('_', '/');
+  const lastUnderscoreIndex = pairSlug.lastIndexOf('_');
+  const market = pairSlug.substring(0, lastUnderscoreIndex) + '/' + pairSlug.substring(lastUnderscoreIndex + 1);
   const [series, setSeries] = useState<any[]>([]);
   const [options, setOptions] = useState<any>({
     chart: {

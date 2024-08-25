@@ -151,7 +151,7 @@ export function TradeHistory({ market, setTradesCount }: TradeHistoryProps) {
                           <span className="ml-auto font-medium text-right">
                             {formatAmountTrade(trade.volume)}
                           </span>
-                          <Avatar src={`https://api.xcp.io/img/icon/${market.split('_')[0]}`} className="size-6" />
+                          <Avatar src={`https://api.xcp.io/img/icon/${market.substring(0, market.lastIndexOf('_'))}}`} className="size-6" />
                         </div>
                       </TableCell>
                       <TableCell>
@@ -159,7 +159,7 @@ export function TradeHistory({ market, setTradesCount }: TradeHistoryProps) {
                           <span className="ml-auto font-medium text-right">
                             {formatAmountTrade(trade.price)}
                           </span>
-                          <Avatar src={`https://api.xcp.io/img/icon/${market.split('_')[1]}`} className="size-6" />
+                          <Avatar src={`https://api.xcp.io/img/icon/${market.substring(0, market.lastIndexOf('_'))}`} className="size-6" />
                         </div>
                       </TableCell>
                       <TableCell className="no-ligatures">

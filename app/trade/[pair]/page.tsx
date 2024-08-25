@@ -70,7 +70,8 @@ interface OtherMarket {
 
 export default function TradePage({ params }: TradePageParams) {
   const tradingPair = params.pair;
-  const market = tradingPair.replace('_', '/');
+  const lastUnderscoreIndex = tradingPair.lastIndexOf('_');
+  const market = tradingPair.substring(0, lastUnderscoreIndex) + '/' + tradingPair.substring(lastUnderscoreIndex + 1);
   const [activeInterval, setActiveInterval] = useState('1m');
   const [activeTab, setActiveTab] = useState('area');
   const [activeTable, setActiveTable] = useState('trades');

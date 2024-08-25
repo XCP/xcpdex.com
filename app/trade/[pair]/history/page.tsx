@@ -31,7 +31,8 @@ interface TradingPairData {
 
 export default function TradeMatchesPage({ params }: TradeMatchesPageParams) {
   const tradingPair = params.pair;
-  const market = tradingPair.replace('_', '/');
+  const lastUnderscoreIndex = tradingPair.lastIndexOf('_');
+  const market = tradingPair.substring(0, lastUnderscoreIndex) + '/' + tradingPair.substring(lastUnderscoreIndex + 1);
   const [pairData, setPairData] = useState<TradingPairData | null>(null);
   const [loading, setLoading] = useState(true);
   const [totalResults, setTotalResults] = useState<number>(0);

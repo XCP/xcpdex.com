@@ -42,6 +42,7 @@ interface TradingPairData {
   last_trade_date?: number;
   base_asset: {
     asset: string;
+    symbol: string;
     supply: number;
     issued?: number;
     burned?: number;

@@ -12,15 +12,16 @@ interface StatProps {
   subvalue: string | number;
   issued?: number;
   burned?: number;
+  className?: string;
 }
 
-export function Stat({ title, value, subvalue, issued = 0, burned = 0 }: StatProps) {
+export function Stat({ title, value, subvalue, issued = 0, burned = 0, className }: StatProps) {
   const isLocked = subvalue === 'Locked';
   const isUnlocked = subvalue === 'Unlocked';
   const burnPercentage = burned && issued > 0 ? (burned / issued) * 100 : 0;
 
   return (
-    <div>
+    <div className={className}>
       <Divider />
       <div className="mt-6 text-xs/6 font-medium sm:text-sm/6">{title}</div>
       <div className="mt-3 text-xl/8 font-semibold sm:text-2xl/8">{value}</div>

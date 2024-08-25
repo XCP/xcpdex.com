@@ -75,10 +75,10 @@ export default function TradingPairsPage() {
       <div className="mt-4 mb-8 flex flex-wrap items-end justify-between gap-4">
         <div className="flex sm:flex-wrap items-center gap-6">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
-            <Heading>Counterparty DEX</Heading>
+            <Heading>XCP Dex</Heading>
             <Avatar src={`https://api.xcp.io/img/icon/XCP`} className="size-5" />
           </div>
-          <Text className="mt-2">No trades yet for this pair.</Text>
+          <Text className="mt-2">Trade Crypto Peer-to-Peer.</Text>
         </div>
         <div className="flex gap-4">
           <Button href="#" outline>Trade</Button>
@@ -88,7 +88,7 @@ export default function TradingPairsPage() {
       <Divider />
       <Navbar>
         <NavbarSection>
-          {['BTC', 'XCP', 'ETH-ETH', 'ETH-WETH', 'ETH-USDC', 'PEPECASH', 'BITCORN', 'BITCRYSTALS'].map((market) => (
+          {['BTC', 'XCP', 'ETH-ETH', 'ETH-WETH', 'ETH-USDC', 'PEPECASH', 'BITCORN'].map((market) => (
             <NavbarItem
               key={market}
               as="button"

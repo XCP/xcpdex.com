@@ -28,6 +28,7 @@ interface TradingPair {
   last_trade_price?: string;
   last_trade_price_usd?: string;
   last_trade_date?: number;
+  [key: `volume_${string}_usd`]: string | undefined;
 }
 
 export default function TradingPairsPage() {

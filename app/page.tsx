@@ -32,9 +32,9 @@ interface TradingPair {
 }
 
 export default function TradingPairsPage() {
-  const [activeMarket, setActiveMarket] = useState('XCP');
-  const [activeVolume, setActiveVolume] = useState('30d'); // Default to 30d volume
-  const [sortKey, setSortKey] = useState('market_cap_usd'); // Default to market cap
+  const [activeMarket, setActiveMarket] = useState('BTC');
+  const [activeVolume, setActiveVolume] = useState('all'); // Default to all volume
+  const [sortKey, setSortKey] = useState('volume_all_usd'); // Default to volume usd
   const [sortOrder, setSortOrder] = useState('desc'); // Default to descending order
   const [qualityFilter, setQualityFilter] = useState(true); // Quality filter switch state
   const [tradingPairs, setTradingPairs] = useState<TradingPair[]>([]);
@@ -72,13 +72,15 @@ export default function TradingPairsPage() {
 
   return (
     <>
-      <div className="mt-4 mb-8 flex flex-wrap items-end justify-between gap-4">
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div className="flex sm:flex-wrap items-center gap-6">
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
-            <Heading>XCP Dex</Heading>
-            <Avatar src={`https://api.xcp.io/img/icon/XCP`} className="size-5" />
+          <div>
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
+              <Heading>XCP Dex</Heading>
+              <Avatar src={`https://api.xcp.io/img/icon/XCP`} className="size-5" />
+            </div>
+            <Text className="mt-2">Trade Bitcoin Assets Peer-to-Peer</Text>
           </div>
-          <Text className="mt-2">Trade Assets Peer-to-Peer.</Text>
         </div>
         <div className="flex gap-4">
           <Button href="#" outline>Trade</Button>
@@ -88,7 +90,7 @@ export default function TradingPairsPage() {
       <Divider />
       <Navbar>
         <NavbarSection>
-          {['BTC', 'XCP', 'ETH-ETH', 'ETH-WETH', 'ETH-USDC', 'PEPECASH', 'BITCORN'].map((market) => (
+          {['BTC', 'XCP', 'PEPECASH', 'BITCRYSTALS', 'BITCORN'].map((market) => (
             <NavbarItem
               key={market}
               as="button"
@@ -110,7 +112,7 @@ export default function TradingPairsPage() {
               onClick={() => setActiveVolume(volume)}
               current={activeVolume === volume}
             >
-              {volume}
+              <span className="capitalize">{volume}</span>
             </NavbarItem>
           ))}
         </NavbarSection>
@@ -130,7 +132,7 @@ export default function TradingPairsPage() {
                   Price (USD)
                 </TableHeader>
                 <TableHeader onClick={() => handleSort(`volume_${activeVolume}_usd`)} className="cursor-pointer">
-                  Volume ({activeVolume})
+                  Volume (<span className="capitalize">{activeVolume}</span>)
                 </TableHeader>
                 <TableHeader onClick={() => handleSort('market_cap_usd')} className="cursor-pointer">
                   Market Cap
@@ -147,7 +149,7 @@ export default function TradingPairsPage() {
                 </TableRow>
               ) : (
                 tradingPairs.map((pair) => (
-                  <TableRow key={pair.slug}>
+                  <TableRow key={pair.slug} href={`/trade/${pair.slug}`}>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <Avatar src={`https://api.xcp.io/img/icon/${pair.slug.split('_')[0]}`} className="size-6" />

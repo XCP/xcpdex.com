@@ -161,7 +161,7 @@ export default function TradingPairsPage() {
                     </TableCell>
                     <TableCell>
                       {pair[`volume_${activeVolume}_usd`]
-                        ? `$${formatAmount(parseFloat(pair[`volume_${activeVolume}_usd`]), true)}`
+                        ? `$${formatAmount(parseFloat(pair[`volume_${activeVolume}_usd`] || '0'), true)}`
                         : 'N/A'}
                     </TableCell>
                     <TableCell>

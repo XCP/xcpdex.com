@@ -1,113 +1,196 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import React, { useState, useEffect } from 'react';
+import { Navbar, NavbarItem, NavbarSection } from '@/components/navbar';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table';
+import { Avatar } from '@/components/avatar';
+import { Badge } from '@/components/badge';
+import { Divider } from '@/components/divider';
+import { ArrowPathIcon } from '@heroicons/react/16/solid';
+import { formatAmount } from '@/utils/formatAmount';
+import { formatTimeAgo } from '@/utils/formatTimeAgo';
+import { Switch, SwitchField } from '@/components/switch';
+import { Label, Description } from '@/components/fieldset';
+import { Button } from '@/components/button';
+import { Text } from '@/components/text';
+import { Heading } from '@/components/heading';
+
+interface TradingPair {
+  name: string;
+  slug: string;
+  market_cap?: string;
+  market_cap_usd?: string;
+  volume_7d_usd?: string;
+  volume_30d_usd?: string;
+  volume_all_usd?: string;
+  last_trade_type?: string;
+  last_trade_link?: string;
+  last_trade_price?: string;
+  last_trade_price_usd?: string;
+  last_trade_date?: number;
+}
+
+export default function TradingPairsPage() {
+  const [activeMarket, setActiveMarket] = useState('XCP');
+  const [activeVolume, setActiveVolume] = useState('30d'); // Default to 30d volume
+  const [sortKey, setSortKey] = useState('market_cap_usd'); // Default to market cap
+  const [sortOrder, setSortOrder] = useState('desc'); // Default to descending order
+  const [qualityFilter, setQualityFilter] = useState(true); // Quality filter switch state
+  const [tradingPairs, setTradingPairs] = useState<TradingPair[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTradingPairs = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          `https://api.xcp.io/api/v1/trading-pairs/${activeMarket}?volume_range=${activeVolume}&sort_by=${sortKey}&sort_order=${sortOrder}&quality_filter=${qualityFilter}`
+        );
+        const json = await response.json();
+        setTradingPairs(json.result || []);
+      } catch (error) {
+        console.error('Failed to fetch trading pairs:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTradingPairs();
+  }, [activeMarket, activeVolume, sortKey, sortOrder, qualityFilter]);
+
+  const handleSort = (key: string) => {
+    if (sortKey === key) {
+      // Toggle sort order if the same key is clicked
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      // Set new sort key and default to descending order
+      setSortKey(key);
+      setSortOrder('desc');
+    }
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <>
+      <div className="mt-4 mb-8 flex flex-wrap items-end justify-between gap-4">
+        <div className="flex sm:flex-wrap items-center gap-6">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
+            <Heading>Counterparty DEX</Heading>
+            <Avatar src={`https://api.xcp.io/img/icon/XCP`} className="size-5" />
+          </div>
+          <Text className="mt-2">No trades yet for this pair.</Text>
+        </div>
+        <div className="flex gap-4">
+          <Button href="#" outline>Trade</Button>
+          <Button href={`https://www.xcp.io/`} target="_blank">XCP.io</Button>
         </div>
       </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+      <Divider />
+      <Navbar>
+        <NavbarSection>
+          {['BTC', 'XCP', 'ETH-ETH', 'ETH-WETH', 'ETH-USDC', 'PEPECASH', 'BITCORN', 'BITCRYSTALS'].map((market) => (
+            <NavbarItem
+              key={market}
+              as="button"
+              onClick={() => setActiveMarket(market)}
+              current={activeMarket === market}
+            >
+              <div className="flex items-center gap-2">
+                <Avatar src={`https://api.xcp.io/img/icon/${market.split('-').pop()}`} className="size-6" />
+                <span className="font-medium">{market.replace('ETH-', '')}</span>
+              </div>
+            </NavbarItem>
+          ))}
+        </NavbarSection>
+        <NavbarSection className="ml-auto">
+          {['7d', '30d', 'all'].map((volume) => (
+            <NavbarItem
+              key={volume}
+              as="button"
+              onClick={() => setActiveVolume(volume)}
+              current={activeVolume === volume}
+            >
+              {volume}
+            </NavbarItem>
+          ))}
+        </NavbarSection>
+      </Navbar>
+      <Divider />
+      <div className="mt-8">
+        {loading ? (
+          <div className="flex flex-col justify-center items-center h-48 my-24">
+            <ArrowPathIcon className="h-10 w-10 text-gray-500 animate-spin" />
+          </div>
+        ) : (
+          <Table className="[--gutter:theme(spacing.6)] lg:[--gutter:theme(spacing.10)]">
+            <TableHead>
+              <TableRow>
+                <TableHeader>Asset</TableHeader>
+                <TableHeader onClick={() => handleSort('last_trade_price_usd')} className="cursor-pointer">
+                  Price (USD)
+                </TableHeader>
+                <TableHeader onClick={() => handleSort(`volume_${activeVolume}_usd`)} className="cursor-pointer">
+                  Volume ({activeVolume})
+                </TableHeader>
+                <TableHeader onClick={() => handleSort('market_cap_usd')} className="cursor-pointer">
+                  Market Cap
+                </TableHeader>
+                <TableHeader>Last Trade</TableHeader>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {tradingPairs.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center text-zinc-500 py-24">
+                    No trades for time period.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                tradingPairs.map((pair) => (
+                  <TableRow key={pair.slug}>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Avatar src={`https://api.xcp.io/img/icon/${pair.slug.split('_')[0]}`} className="size-6" />
+                        <span className="font-medium">{pair.slug.split('_')[0]}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {pair.last_trade_price_usd
+                        ? `$${formatAmount(parseFloat(pair.last_trade_price_usd), true)}`
+                        : 'N/A'}
+                    </TableCell>
+                    <TableCell>
+                      {pair[`volume_${activeVolume}_usd`]
+                        ? `$${formatAmount(parseFloat(pair[`volume_${activeVolume}_usd`]), true)}`
+                        : 'N/A'}
+                    </TableCell>
+                    <TableCell>
+                      {pair.market_cap_usd
+                        ? `$${formatAmount(parseFloat(pair.market_cap_usd), true)}`
+                        : 'N/A'}
+                    </TableCell>
+                    <TableCell>
+                      <Badge color="sky">
+                        {pair.last_trade_type || 'N/A'}
+                      </Badge>
+                      <span className="ml-2 text-sm text-zinc-500">
+                        {pair.last_trade_date ? formatTimeAgo(pair.last_trade_date) : 'N/A'}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        )}
       </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+      <Divider />
+      <div className="mt-8">
+        <SwitchField>
+          <Label>Quality Filter (beta)</Label>
+          <Description>Filters markets with a high degree of spam or wash trades.</Description>
+          <Switch name="quality_filter" defaultChecked={qualityFilter} onChange={setQualityFilter} />
+        </SwitchField>
       </div>
-    </main>
+    </>
   );
 }

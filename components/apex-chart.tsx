@@ -37,7 +37,7 @@ const ApexChart: React.FC<ApexChartProps> = ({ pairSlug, interval }) => {
       tooltip: {
         enabled: true
       },
-      decimalsInFloat: 2,
+      decimalsInFloat: 8,
       min: 0,
       forceNiceScale: true
     }

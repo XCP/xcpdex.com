@@ -130,7 +130,7 @@ export function OrderMatches({ market, setTradesCount, direction }: OrderMatches
                 <TableHeader>Amount</TableHeader>
                 <TableHeader>Price</TableHeader>
                 <TableHeader>Maker</TableHeader>
-                <TableHeader className="hidden 3xl:table-cell">Taker</TableHeader>
+                <TableHeader className="hidden 2xl:table-cell">Taker</TableHeader>
                 <TableHeader>Time</TableHeader>
               </TableRow>
             </TableHead>
@@ -195,7 +195,7 @@ export function OrderMatches({ market, setTradesCount, direction }: OrderMatches
                       <TableCell className="no-ligatures">
                         {market === match.tx1_hash ? match.tx0_address : match.tx1_address}
                       </TableCell>
-                      <TableCell className="no-ligatures hidden 3xl:table-cell">
+                      <TableCell className="no-ligatures hidden 2xl:table-cell">
                         {market === match.tx0_hash ? match.tx1_address : match.tx0_address}
                       </TableCell>
                       <TableCell className="text-zinc-500">

@@ -29,6 +29,12 @@ interface TradePageParams {
 interface TradingPairData {
   market_cap?: string;
   market_cap_usd?: string;
+  volume_7d?: string;
+  volume_7d_usd?: string;
+  volume_30d?: string;
+  volume_30d_usd?: string;
+  volume_all?: string;
+  volume_all_usd?: string;
   last_trade_type?: string;
   last_trade_link?: string;
   last_trade_price?: number;
@@ -107,11 +113,24 @@ export default function TradePage({ params }: TradePageParams) {
               <Heading>{market}</Heading>
               <Avatar src={`https://api.xcp.io/img/icon/${pairData?.quote_asset.symbol}`} className="size-5" />
             </div>
-            {pairData?.last_trade_date && (
-              <Text className="mt-2">
-                Last traded on <Strong>{new Date(pairData.last_trade_date * 1000).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'})}</Strong>
-              </Text>
-            )}
+            {
+              pairData ? (
+                pairData.last_trade_date ? (
+                  <Text className="mt-2">
+                    Last traded on{' '}
+                    <Strong>
+                      {new Date(pairData.last_trade_date * 1000).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })}
+                    </Strong>
+                  </Text>
+                ) : (
+                  <Text className="mt-2">No trades yet for this pair.</Text>
+                )
+              ) : null
+            }
           </div>
         </div>
         <div className="flex gap-4">
@@ -119,7 +138,7 @@ export default function TradePage({ params }: TradePageParams) {
           <Button href={`https://www.xcp.io/asset/${pairData?.base_asset.asset}`} target="_blank">XCP.io</Button>
         </div>
       </div>
-      <div className="grid gap-6 sm:gap-8 grid-cols-3">
+      <div className="grid gap-6 sm:gap-8 grid-cols-3 sm:grid-cols-4">
         {pairData ? (
           <>
             <Stat
@@ -136,6 +155,30 @@ export default function TradePage({ params }: TradePageParams) {
                   ? `${formatAmount(pairData.last_trade_price || 0)} ${pairData.quote_asset.symbol}`
                   : 'No Trades Yet'
               }
+            />
+            <Stat
+              title={
+                parseFloat(pairData?.volume_7d_usd) > 0 
+                  ? "Volume (7d)"
+                  : parseFloat(pairData?.volume_30d_usd) > 0 
+                    ? "Volume (30d)"
+                    : "Volume (All-time)"
+              }
+              value={
+                parseFloat(pairData?.volume_7d_usd) > 0 
+                  ? `$${formatAmount(pairData.volume_7d_usd, true)}`
+                  : parseFloat(pairData?.volume_30d_usd) > 0 
+                    ? `$${formatAmount(pairData.volume_30d_usd, true)}`
+                    : `$${formatAmount(pairData.volume_all_usd, true)}`
+              }
+              subvalue={
+                parseFloat(pairData?.volume_7d) > 0 
+                  ? `${formatAmount(pairData.volume_7d || 0)} ${pairData.base_asset.symbol}`
+                  : parseFloat(pairData?.volume_30d) > 0 
+                    ? `${formatAmount(pairData.volume_30d || 0)} ${pairData.base_asset.symbol}`
+                    : `${formatAmount(pairData.volume_all || 0)} ${pairData.base_asset.symbol}`
+              }
+              className="hidden sm:block"
             />
             <Stat
               title="Market Cap"

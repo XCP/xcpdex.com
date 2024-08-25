@@ -183,7 +183,15 @@ export function calculatePrice(order: Order): string {
 
 export function calculateAmount(order: Order): string {
   const [baseSymbol] = assetsToTradingPair(order);
-  const baseQuantity = new BigNumber(order.give_asset === baseSymbol ? order.give_quantity_normalized : order.get_quantity_normalized);
+  const baseQuantity = new BigNumber(
+    order.status === 'open'
+      ? order.give_asset === baseSymbol
+        ? order.give_remaining_normalized
+        : order.get_remaining_normalized
+      : order.give_asset === baseSymbol
+      ? order.give_quantity_normalized
+      : order.get_quantity_normalized
+  );
   return formatAmountSimple(baseQuantity.toFixed(8));
 }
 

@@ -1,31 +1,31 @@
 'use client';
 
-import { Orders } from '@/components/orders';
+import { Dispensers } from '@/components/dispensers';
 import { Heading } from '@/components/heading';
 import { StatusSelect } from '@/components/status-select';
 import { Suspense, useState } from 'react';
 import { ArrowPathIcon } from '@heroicons/react/16/solid';
 import { useSearchParams } from 'next/navigation';
 
-function OrdersContent() {
+function DispensersContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState(searchParams.get('status') || 'all');
-  const endpoint = 'https://api.counterparty.info/v2/orders';
+  const endpoint = 'https://api.counterparty.info/v2/dispensers';
 
   return (
     <>
       <div className="mb-8 flex items-center lg:items-end justify-between gap-4">
-        <Heading>Orders</Heading>
+        <Heading>Dispensers</Heading>
         <div className="ml-auto w-auto relative">
-          <StatusSelect status={status} setStatus={setStatus} basePath="/orders" />
+          <StatusSelect status={status} setStatus={setStatus} basePath="/dispensers" />
         </div>
       </div>
-      <Orders endpoint={endpoint} status={status} context="trade" />
+      <Dispensers endpoint={endpoint} status={status} />
     </>
   );
 }
 
-export default function OrdersPage() {
+export default function DispensersPage() {
   return (
     <>
       <Suspense
@@ -35,7 +35,7 @@ export default function OrdersPage() {
           </div>
         }
       >
-        <OrdersContent />
+        <DispensersContent />
       </Suspense>
     </>
   );

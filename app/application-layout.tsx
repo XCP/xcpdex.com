@@ -167,11 +167,11 @@ export function ApplicationLayout({
               </SidebarItem>
               <SidebarItem href="/orders" current={pathname.startsWith('/orders')}>
                 <TicketIcon />
-                <SidebarLabel>Orders</SidebarLabel>
+                <SidebarLabel>Dex Orders</SidebarLabel>
               </SidebarItem>
-              <SidebarItem href="/settings" current={pathname.startsWith('/settings')}>
+              <SidebarItem href="/dispensers" current={pathname.startsWith('/dispensers')}>
                 <Cog6ToothIcon />
-                <SidebarLabel>Settings</SidebarLabel>
+                <SidebarLabel>Dispensers</SidebarLabel>
               </SidebarItem>
             </SidebarSection>
 

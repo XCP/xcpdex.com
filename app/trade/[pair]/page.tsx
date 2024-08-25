@@ -7,7 +7,6 @@ import { Avatar } from '@/components/avatar';
 import { Button } from '@/components/button';
 import { Link } from '@/components/link';
 import { Stat } from '@/components/stat';
-import { OrderBook } from '@/components/order-book';
 import { OrderMatches } from '@/components/order-matches';
 import { TradeHistory } from '@/components/trade-history';
 import OtherMarkets from '@/components/other-markets';
@@ -17,7 +16,6 @@ import AssetBalances from '@/components/asset-balances';
 import { ChevronLeftIcon, PresentationChartBarIcon, PresentationChartLineIcon, CheckBadgeIcon } from '@heroicons/react/16/solid';
 import { Navbar, NavbarItem, NavbarSection } from '@/components/navbar';
 import { formatAmount } from '@/utils/formatAmount';
-import { formatTradeType } from '@/utils/formatTradeType';
 import { Strong, Text } from '@/components/text'
 
 interface TradePageParams {

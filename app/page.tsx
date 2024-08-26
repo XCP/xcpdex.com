@@ -90,7 +90,7 @@ export default function TradingPairsPage() {
       <Divider />
       <Navbar>
         <NavbarSection>
-          {['BTC', 'XCP', 'PEPECASH', 'BITCRYSTALS', 'BITCORN'].map((market) => (
+          {['BTC', 'XCP', 'ETH-ETH', 'ETH-WETH', 'ETH-USDC'].map((market) => (
             <NavbarItem
               key={market}
               as="button"

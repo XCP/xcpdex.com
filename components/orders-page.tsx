@@ -15,7 +15,7 @@ function OrdersContent() {
   return (
     <>
       <div className="mb-8 flex items-center lg:items-end justify-between gap-4">
-        <Heading>Orders</Heading>
+        <Heading>Dex Orders</Heading>
         <div className="ml-auto w-auto relative">
           <StatusSelect status={status} setStatus={setStatus} basePath="/orders" />
         </div>

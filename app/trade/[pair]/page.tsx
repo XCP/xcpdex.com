@@ -207,7 +207,7 @@ export default function TradePage({ params }: TradePageParams) {
           <p>Loading data...</p>
         )}
       </div>
-      {pairData?.other_markets && pairData.other_markets.length > 0 && (
+      {pairData?.other_markets && pairData.other_markets.length > 1 && (
         <OtherMarkets markets={pairData.other_markets} />
       )}
       <div className={`flex justify-between items-center ${pairData?.other_markets && pairData.other_markets.length > 3 ? 'mt-3' : 'mt-8'}`}>

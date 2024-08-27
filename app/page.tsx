@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Avatar } from '@/components/avatar';
 import { Badge } from '@/components/badge';
 import { Divider } from '@/components/divider';
-import { ArrowPathIcon } from '@heroicons/react/16/solid';
+import { ArrowPathIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/16/solid';
 import { formatAmount } from '@/utils/formatAmount';
 import { formatTimeAgo } from '@/utils/formatTimeAgo';
 import { Switch, SwitchField } from '@/components/switch';
@@ -33,7 +33,7 @@ interface TradingPair {
 
 export default function TradingPairsPage() {
   const [activeMarket, setActiveMarket] = useState('BTC');
-  const [activeVolume, setActiveVolume] = useState('all'); // Default to all volume
+  const [activeVolume, setActiveVolume] = useState('7d'); // Default to 7d volume
   const [sortKey, setSortKey] = useState('volume_all_usd'); // Default to volume usd
   const [sortOrder, setSortOrder] = useState('desc'); // Default to descending order
   const [qualityFilter, setQualityFilter] = useState(true); // Quality filter switch state
@@ -68,6 +68,25 @@ export default function TradingPairsPage() {
       setSortKey(key);
       setSortOrder('desc');
     }
+  };
+
+  const renderSortIcon = (key: string) => {
+    if (sortKey === key) {
+      return sortOrder === 'asc' ? <ChevronUpIcon className="h-4 w-4 ml-1" /> : <ChevronDownIcon className="h-4 w-4 ml-1" />;
+    }
+    return null;
+  };
+
+  const renderTableHeader = (title: string, key: string) => {
+    const isSorted = sortKey === key;
+    return (
+      <TableHeader onClick={() => handleSort(key)} className={`cursor-pointer ${isSorted ? 'font-semibold' : ''}`}>
+        <div className="flex items-center">
+          {title}
+          {renderSortIcon(key)}
+        </div>
+      </TableHeader>
+    );
   };
 
   return (
@@ -127,16 +146,10 @@ export default function TradingPairsPage() {
           <Table className="[--gutter:theme(spacing.6)] lg:[--gutter:theme(spacing.10)]">
             <TableHead>
               <TableRow>
-                <TableHeader>Asset</TableHeader>
-                <TableHeader onClick={() => handleSort('last_trade_price_usd')} className="cursor-pointer">
-                  Price (USD)
-                </TableHeader>
-                <TableHeader onClick={() => handleSort(`volume_${activeVolume}_usd`)} className="cursor-pointer">
-                  Volume (<span className="capitalize">{activeVolume}</span>)
-                </TableHeader>
-                <TableHeader onClick={() => handleSort('market_cap_usd')} className="cursor-pointer">
-                  Market Cap
-                </TableHeader>
+                {renderTableHeader('Asset', 'slug')}
+                {renderTableHeader('Price (USD)', 'last_trade_price_usd')}
+                {renderTableHeader(`Volume (${activeVolume})`, `volume_${activeVolume}_usd`)}
+                {renderTableHeader('Market Cap', 'market_cap_usd')}
                 <TableHeader>Last Trade</TableHeader>
               </TableRow>
             </TableHead>

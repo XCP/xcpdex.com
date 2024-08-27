@@ -34,7 +34,7 @@ interface TradingPair {
 export default function TradingPairsPage() {
   const [activeMarket, setActiveMarket] = useState('BTC');
   const [activeVolume, setActiveVolume] = useState('7d'); // Default to 7d volume
-  const [sortKey, setSortKey] = useState('volume_all_usd'); // Default to volume usd
+  const [sortKey, setSortKey] = useState('volume_7d_usd'); // Default to volume usd
   const [sortOrder, setSortOrder] = useState('desc'); // Default to descending order
   const [qualityFilter, setQualityFilter] = useState(true); // Quality filter switch state
   const [tradingPairs, setTradingPairs] = useState<TradingPair[]>([]);

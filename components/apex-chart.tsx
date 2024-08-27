@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import ReactApexChart from 'react-apexcharts';
+import dynamic from 'next/dynamic';
 
 interface ApexChartProps {
   pairSlug: string;
   interval: string;
 }
+
+const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 const ApexChart: React.FC<ApexChartProps> = ({ pairSlug, interval }) => {
   const lastUnderscoreIndex = pairSlug.lastIndexOf('_');

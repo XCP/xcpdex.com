@@ -3,8 +3,13 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/markets/:path*',
+        source: '/market/:path*',
         destination: '/trade/:path*',
+        permanent: true,
+      },
+      {
+        source: '/markets/:path*',
+        destination: '/',
         permanent: true,
       },
     ];

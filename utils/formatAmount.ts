@@ -38,6 +38,8 @@ export function formatAmount(amount: string | number, usd: boolean = false, pct:
       } else {
         formattedNumber = parseFloat(numStr).toFixed(2);
       }
+
+      return formattedNumber
     } else if (pct && num > 1) {
       formattedNumber = parseFloat(numStr).toFixed(2);
     } else if (significantIndex < 4) {

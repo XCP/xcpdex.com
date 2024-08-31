@@ -1,5 +1,6 @@
 'use client';
 
+import { Stat } from '@/components/stat';
 import { Orders } from '@/components/orders';
 import { Heading } from '@/components/heading';
 import { StatusSelect } from '@/components/status-select';
@@ -28,6 +29,24 @@ export default function AddressOrdersPage({ params }: { params: { address: strin
         <div className="w-full lg:w-auto mt-4 lg:mt-0">
           <StatusSelect status={status} setStatus={setStatus} basePath={`/address/${address}`} />
         </div>
+      </div>
+      <div className="mt-8 grid gap-6 sm:gap-8 grid-cols-3 2xl:grid-cols-4">
+        <Stat
+          title="Last Price"
+          value={'N/A'}
+        />
+        <Stat
+          title="Last Price"
+          value={'N/A'}
+        />
+        <Stat
+          title="Last Price"
+          value={'N/A'}
+        />
+        <Stat
+          title="Last Price"
+          value={'N/A'}
+        />
       </div>
       <div className="mt-8">
         <Orders endpoint={endpoint} status={status} />

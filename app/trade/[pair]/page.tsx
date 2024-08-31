@@ -158,25 +158,13 @@ export default function TradePage({ params }: TradePageParams) {
             />
             <Stat
               title={
-                parseFloat(pairData?.volume_7d_usd || '0') > 0 
-                  ? "Volume (7d)"
-                  : parseFloat(pairData?.volume_30d_usd || '0') > 0 
-                    ? "Volume (30d)"
-                    : "Volume (All-time)"
+                "Volume (All)"
               }
               value={
-                parseFloat(pairData?.volume_7d_usd || '0') > 0 
-                  ? `$${formatAmount(pairData.volume_7d_usd || '0', true)}`
-                  : parseFloat(pairData?.volume_30d_usd || '0') > 0 
-                    ? `$${formatAmount(pairData.volume_30d_usd || '0', true)}`
-                    : `$${formatAmount(pairData.volume_all_usd || '0', true)}`
+                `$${formatAmount(pairData.volume_all_usd || '0', true)}`
               }
               subvalue={
-                parseFloat(pairData?.volume_7d || '0') > 0 
-                  ? `${formatAmount(pairData.volume_7d || '0')} ${pairData.base_asset.symbol}`
-                  : parseFloat(pairData?.volume_30d || '0') > 0 
-                    ? `${formatAmount(pairData.volume_30d || '0')} ${pairData.base_asset.symbol}`
-                    : `${formatAmount(pairData.volume_all || '0')} ${pairData.base_asset.symbol}`
+                `${formatAmount(pairData.volume_all || '0')} ${pairData.base_asset.symbol}`
               }
               className="hidden 2xl:block"
             />
@@ -208,7 +196,9 @@ export default function TradePage({ params }: TradePageParams) {
         )}
       </div>
       {pairData?.other_markets && pairData.other_markets.length > 1 && (
-        <OtherMarkets markets={pairData.other_markets} />
+        <OtherMarkets 
+          other_markets={pairData.other_markets} 
+        />
       )}
       <div className={`flex justify-between items-center ${pairData?.other_markets && pairData.other_markets.length > 3 ? 'mt-3' : 'mt-8'}`}>
         <div className="flex space-x-2 lg:space-x-4">

@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from 'react';
 import { Avatar } from '@/components/avatar';
 import { Table, TableHead, TableRow, TableHeader, TableBody, TableCell } from '@/components/table';
@@ -11,6 +9,9 @@ interface OtherMarket {
   slug: string;
   market_cap?: string;
   market_cap_usd?: string;
+  volume_7d_usd?: string;
+  volume_30d_usd?: string;
+  volume_all_usd?: string;
   last_trade_type?: string;
   last_trade_link?: string;
   last_trade_price?: number;
@@ -21,18 +22,20 @@ interface OtherMarket {
   };
 }
 
-interface OtherMarketsProps {
-  markets: OtherMarket[];
+interface PairDataProps {
+  other_markets: OtherMarket[];
 }
 
-const OtherMarkets: React.FC<OtherMarketsProps> = ({ markets }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+const OtherMarkets: React.FC<PairDataProps> = ({ other_markets }) => {
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
+  const toggleExpand = () => setIsExpanded((prev) => !prev);
+
+  const displayedMarkets = isExpanded ? other_markets : other_markets.slice(0, 3);
+
+  const formatDate = (timestamp?: number) => {
+    return timestamp ? new Date(timestamp * 1000).toLocaleDateString() : 'N/A';
   };
-
-  const displayedMarkets = isExpanded ? markets : markets.slice(0, 3);
 
   return (
     <div className="mt-8">
@@ -42,6 +45,7 @@ const OtherMarkets: React.FC<OtherMarketsProps> = ({ markets }) => {
             <TableHeader>Markets</TableHeader>
             <TableHeader>Ratio</TableHeader>
             <TableHeader>Price</TableHeader>
+            <TableHeader className="hidden 2xl:table-cell">Volume</TableHeader>
             <TableHeader>Market Cap</TableHeader>
             <TableHeader className="text-right">Last Trade</TableHeader>
           </TableRow>
@@ -49,7 +53,7 @@ const OtherMarkets: React.FC<OtherMarketsProps> = ({ markets }) => {
         <TableBody>
           {displayedMarkets.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5} className="text-center text-zinc-500 py-24">
+              <TableCell colSpan={6} className="text-center text-zinc-500 py-24">
                 No other markets available.
               </TableCell>
             </TableRow>
@@ -64,33 +68,25 @@ const OtherMarkets: React.FC<OtherMarketsProps> = ({ markets }) => {
                 </TableCell>
                 <TableCell>{market.last_trade_price ? `${formatAmount(market.last_trade_price)} ${market.quote_asset.symbol}` : 'N/A'}</TableCell>
                 <TableCell>{market.last_trade_price_usd ? `$${formatAmount(market.last_trade_price_usd, true)}` : 'N/A'}</TableCell>
+                <TableCell className="hidden 2xl:table-cell">{`$${formatAmount(market.volume_all_usd || '0', true)}`}</TableCell>
                 <TableCell>{market.market_cap_usd ? `$${formatAmount(market.market_cap_usd, true)}` : 'N/A'}</TableCell>
                 <TableCell className="text-right">
-                  {market.last_trade_date
-                    ? `${new Date(Number(market.last_trade_date) * 1000).toLocaleDateString()}` 
-                    : 'N/A'}
+                  {formatDate(market.last_trade_date)}
                 </TableCell>
               </TableRow>
             ))
           )}
         </TableBody>
       </Table>
-      
-      {markets.length > 3 && (
+
+      {other_markets.length > 3 && (
         <div className="flex justify-center">
           <button
+            aria-label={isExpanded ? 'Collapse markets' : 'Expand markets'}
             className="flex items-center justify-center px-10 rounded-b text-zinc-500 hover:text-zinc-950 border border-t-0 hover:bg-zinc-950/5 hover:border-b-zinc-950/10 border-zinc-950/10"
             onClick={toggleExpand}
           >
-            {isExpanded ? (
-              <>
-                <ChevronUpIcon className="size-5" />
-              </>
-            ) : (
-              <>
-                <ChevronDownIcon className="size-5" />
-              </>
-            )}
+            {isExpanded ? <ChevronUpIcon className="size-5" /> : <ChevronDownIcon className="size-5" />}
           </button>
         </div>
       )}

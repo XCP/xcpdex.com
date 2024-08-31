@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Avatar } from '@/components/avatar';
 import { Badge } from '@/components/badge';
 import { Divider } from '@/components/divider';
+import { Stat } from '@/components/stat';
 import { ArrowPathIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/16/solid';
 import { formatAmount } from '@/utils/formatAmount';
 import { formatTimeAgo } from '@/utils/formatTimeAgo';
@@ -33,8 +34,8 @@ interface TradingPair {
 
 export default function TradingPairsPage() {
   const [activeMarket, setActiveMarket] = useState('BTC');
-  const [activeVolume, setActiveVolume] = useState('7d'); // Default to 7d volume
-  const [sortKey, setSortKey] = useState('volume_7d_usd'); // Default to volume usd
+  const [activeVolume, setActiveVolume] = useState('all'); // Default to all volume
+  const [sortKey, setSortKey] = useState('volume_all_usd'); // Default to volume usd
   const [sortOrder, setSortOrder] = useState('desc'); // Default to descending order
   const [qualityFilter, setQualityFilter] = useState(true); // Quality filter switch state
   const [tradingPairs, setTradingPairs] = useState<TradingPair[]>([]);
@@ -106,7 +107,24 @@ export default function TradingPairsPage() {
           <Button href={`https://www.xcp.io/`} target="_blank">XCP.io</Button>
         </div>
       </div>
-      <Divider />
+      <div className="mb-8 grid gap-6 sm:gap-8 grid-cols-3 2xl:grid-cols-4">
+        <Stat
+          title="Last Price"
+          value={'N/A'}
+        />
+        <Stat
+          title="Last Price"
+          value={'N/A'}
+        />
+        <Stat
+          title="Last Price"
+          value={'N/A'}
+        />
+        <Stat
+          title="Last Price"
+          value={'N/A'}
+        />
+      </div>
       <Navbar>
         <NavbarSection>
           {['BTC', 'XCP', 'ETH-ETH', 'ETH-WETH', 'ETH-USDC', 'PEPECASH', 'BITCRYSTALS', 'BITCORN'].map((market) => (
@@ -156,7 +174,7 @@ export default function TradingPairsPage() {
               <TableRow>
                 {renderTableHeader('Asset', 'slug')}
                 {renderTableHeader('Price (USD)', 'last_trade_price_usd')}
-                {renderTableHeader(`Volume`, `volume_${activeVolume}_usd`)}
+                {renderTableHeader(`Volume (${activeVolume.replace('all', 'All')})`, `volume_${activeVolume}_usd`)}
                 {renderTableHeader('Market Cap', 'market_cap_usd')}
                 <TableHeader>Last Trade</TableHeader>
               </TableRow>

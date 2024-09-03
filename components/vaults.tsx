@@ -189,7 +189,7 @@ export function Vaults({ endpoint, status = 'active' }: VaultsProps) {
                     </div>
                   </TableCell>
                   <TableCell className="no-ligatures hidden 2xl:table-cell">
-                    {formatAddress(vault.maker ?? vault.taker)}
+                    {formatAddress(vault.maker ?? vault.taker ?? '')}
                   </TableCell>
                   <TableCell>
                     <Badge color={statusColor} className="capitalize">

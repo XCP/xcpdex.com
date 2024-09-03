@@ -186,7 +186,7 @@ export function calculatePricePlain(order: Order): string {
   const baseQuantity = new BigNumber(order.give_asset === baseSymbol ? order.give_quantity_normalized : order.get_quantity_normalized);
   const quoteQuantity = new BigNumber(order.give_asset === quoteSymbol ? order.give_quantity_normalized : order.get_quantity_normalized);
   const price = quoteQuantity.dividedBy(baseQuantity);
-  return price;
+  return price.toFixed(8);
 }
 
 export function calculateAmount(order: Order): string {

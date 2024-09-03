@@ -42,7 +42,7 @@ interface Vault {
   price: string;
   maker?: string;
   taker?: string;
-  originated_at: string;
+  originated_at: number;
 }
 
 export function Vaults({ endpoint, status = 'active' }: VaultsProps) {

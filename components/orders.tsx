@@ -5,6 +5,7 @@ import { Avatar } from '@/components/avatar';
 import { Badge } from '@/components/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table';
 import { formatTimeAgo } from '@/utils/formatTimeAgo';
+import { formatAddress } from '@/utils/formatAddress';
 import { Order, getTradingDirection, getBaseAssetString, getTradingPairString, getTradingPairSlug, calculatePrice, calculateAmount } from '@/utils/tradingPairUtils';
 import { ArrowPathIcon } from '@heroicons/react/16/solid';
 import {
@@ -113,6 +114,7 @@ export function Orders({ endpoint, status = 'all', context }: OrdersProps) {
             <TableHeader>Market</TableHeader>
             <TableHeader>Amount</TableHeader>
             <TableHeader>Price</TableHeader>
+            <TableHeader className="hidden 2xl:table-cell">Source</TableHeader>
             <TableHeader>Status</TableHeader>
             <TableHeader>Time</TableHeader>
           </TableRow>
@@ -171,6 +173,9 @@ export function Orders({ endpoint, status = 'all', context }: OrdersProps) {
                       </span>
                       <Avatar src={`https://api.xcp.io/img/icon/${getTradingPairString(order).split('/')[1]}`} className="size-6" />
                     </div>
+                  </TableCell>
+                  <TableCell className="no-ligatures hidden 2xl:table-cell">
+                    {formatAddress(order.source)}
                   </TableCell>
                   <TableCell>
                     <Badge color={statusColor} className="capitalize">

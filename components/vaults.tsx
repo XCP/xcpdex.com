@@ -4,9 +4,6 @@ import { useState, useEffect } from 'react';
 import { Avatar } from '@/components/avatar';
 import { Badge } from '@/components/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table';
-import { formatTimeAgo } from '@/utils/formatTimeAgo';
-import { formatAddress } from '@/utils/formatAddress';
-import { formatAmountTrade } from '@/utils/formatAmountTrade';
 import { ArrowPathIcon } from '@heroicons/react/16/solid';
 import {
   Pagination,
@@ -17,74 +14,56 @@ import {
   PaginationPrevious,
 } from '@/components/pagination';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { formatAmountSimple } from '@/utils/formatAmountSimple';
+import { formatTimeAgo } from '@/utils/formatTimeAgo';
+import { formatAddress } from '@/utils/formatAddress';
 
-interface AssetInfo {
-  asset_longname: string | null;
-  description: string;
-  issuer: string | null;
-  divisible: boolean;
-  locked: boolean;
-}
 
-interface Dispenser {
-  tx_index: number;
-  tx_hash: string;
-  asset: string;
-  source: string;
-  origin: string;
-  asset_info: AssetInfo;
-  give_quantity_normalized: string;
-  satoshi_price_normalized: string;
-  status: number;
-  block_time: number;
-}
-
-interface DispensersProps {
+interface VaultsProps {
   endpoint: string;
   status?: string;
 }
 
-export function Dispensers({ endpoint, status = 'all' }: DispensersProps) {
-  const [dispensers, setDispensers] = useState<Dispenser[]>([]);
+export function Vaults({ endpoint, status = 'active' }: VaultsProps) {
+  const [vaults, setVaults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalResults, setTotalResults] = useState<number>(0);
 
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentPage = parseInt(searchParams.get('page') || '1');
-  const limit = 100; // Number of dispensers per page
-  const offset = (currentPage * 100) - 100;
+  const limit = 100; // Number of vaults per page
   const totalPages = Math.ceil(totalResults / limit);
 
   useEffect(() => {
-    async function fetchDispensers() {
+    async function fetchVaults() {
       setLoading(true);
-      const res = await fetch(`${endpoint}?verbose=true${status !== 'all' ? `&status=${status}` : ''}&limit=${limit}&offset=${offset}`);
+      const res = await fetch(`${endpoint}?page=${currentPage}&status=${status}`);
       const data = await res.json();
-      setDispensers(data.result as Dispenser[]);
+      setVaults(data.result || []);
       setTotalResults(data.result_count || 0);
       setLoading(false);
     }
 
-    fetchDispensers();
-  }, [endpoint, status, offset]);
+    fetchVaults();
+  }, [endpoint, status, currentPage]);
 
   const buildNextHref = () => {
-    if (offset + limit < totalResults) {
+    if (currentPage < totalPages) {
       return `?status=${status}&page=${currentPage + 1}`;
     }
     return null;
   };
 
   const buildPreviousHref = () => {
-    if (offset > 0) {
-      return `?status=${status}&page=${Math.max(currentPage - 1, 1)}`;
+    if (currentPage > 1) {
+      return `?status=${status}&page=${currentPage - 1}`;
     }
     return null;
   };
 
   const buildPageHref = (page: number) => {
-    return `?status=${status}&page=${(page)}`;
+    return `?status=${status}&page=${page}`;
   };
 
   const renderPageNumbers = () => {
@@ -130,7 +109,7 @@ export function Dispensers({ endpoint, status = 'all' }: DispensersProps) {
       <Table className="[--gutter:theme(spacing.6)] lg:[--gutter:theme(spacing.10)]">
         <TableHead>
           <TableRow>
-            <TableHeader>Side</TableHeader>
+            <TableHeader className="w-14">Side</TableHeader>
             <TableHeader>Market</TableHeader>
             <TableHeader>Amount</TableHeader>
             <TableHeader>Price</TableHeader>
@@ -140,62 +119,64 @@ export function Dispensers({ endpoint, status = 'all' }: DispensersProps) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {dispensers.length === 0 ? (
+          {vaults.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5} className="text-center text-zinc-500 py-24">
-                No dispensers found.
+              <TableCell colSpan={6} className="text-center text-zinc-500 py-24">
+                No vaults found.
               </TableCell>
             </TableRow>
           ) : (
-            dispensers.map((dispenser) => {
+            vaults.map((vault) => {
               const statusColor =
-                dispenser.status === 0
-                  ? 'lime'
-                  : dispenser.status === 10
-                  ? 'red'
-                  : dispenser.status === 11
-                  ? 'orange'
-                  : 'zinc';
+                vault.status === 'active'
+                ? 'lime'
+                : vault.status === 'filled'
+                ? 'sky'
+                : vault.status === 'expired'
+                ? 'orange'
+                : vault.status === 'cancelled'
+                ? 'red'
+                : 'zinc';
 
               return (
-                <TableRow key={dispenser.tx_index} href={`/trade/${dispenser.asset_info.asset_longname ?? dispenser.asset}_BTC`} title={`Dispenser #${dispenser.tx_index}`}>
+                <TableRow key={vault.tx_hash} href={`/trade/${vault.trading_pair.slug}`} title={`Vault ${vault.trading_pair.name}`}>
                   <TableCell>
-                    <Badge color={'red'} className="capitalize">
-                      sell
+                    <Badge color={vault.direction === 'sell' ? 'red' : 'green'} className="capitalize">
+                      {vault.direction}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Avatar src={`https://api.xcp.io/img/icon/${dispenser.asset}`} className="size-6" />
-                      <span className="font-medium">{dispenser.asset_info.asset_longname ?? dispenser.asset}/BTC</span>
+                      <Avatar src={`https://api.xcp.io/img/icon/${vault.trading_pair.base_asset.symbol}`} className="size-6" />
+                      <span className="font-medium">{vault.trading_pair.name}</span>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <span className="ml-auto font-medium text-right">
-                        {formatAmountTrade(dispenser.give_quantity_normalized)}
+                        {formatAmountSimple(vault.quantity_remaining)}
                       </span>
-                      <Avatar src={`https://api.xcp.io/img/icon/${dispenser.asset}`} className="size-6" />
+                      <Avatar src={`https://api.xcp.io/img/icon/${vault.trading_pair.base_asset.symbol}`} className="size-6" />
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <span className="ml-auto font-medium text-right">
-                        {formatAmountTrade(dispenser.satoshi_price_normalized)}
+                        {formatAmountSimple(Number(vault.price).toFixed(8))}
                       </span>
-                      <Avatar src={`https://api.xcp.io/img/icon/BTC`} className="size-6" />
+                      <Avatar src={`https://api.xcp.io/img/icon/${vault.trading_pair.quote_asset.symbol}`} className="size-6" />
                     </div>
                   </TableCell>
                   <TableCell className="no-ligatures hidden 2xl:table-cell">
-                    {formatAddress(dispenser.origin)}
+                    {formatAddress(vault.maker ?? vault.taker)}
                   </TableCell>
                   <TableCell>
                     <Badge color={statusColor} className="capitalize">
-                      {dispenser.status === 0 ? 'open' : 'closed'}
+                      {vault.status}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-zinc-500">
-                    {formatTimeAgo(dispenser.block_time)}
+                    {formatTimeAgo(vault.originated_at)}
                   </TableCell>
                 </TableRow>
               );
@@ -203,7 +184,7 @@ export function Dispensers({ endpoint, status = 'all' }: DispensersProps) {
           )}
         </TableBody>
       </Table>
-      {dispensers.length > 0 && (
+      {vaults.length > 0 && (
         <Pagination className="mt-6">
           <PaginationPrevious href={buildPreviousHref()} />
           <PaginationList className="hidden lg:flex">

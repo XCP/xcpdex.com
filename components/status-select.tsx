@@ -30,6 +30,18 @@ export function StatusSelect({ status, setStatus, basePath }: StatusSelectProps)
       );
     }
 
+    if (basePath === '/vaults') {
+      return (
+        <>
+          <option value="all">All</option>
+          <option value="active">Active</option>
+          <option value="expired">Expired</option>
+          <option value="filled">Filled</option>
+          <option value="cancelled">Cancelled</option>
+        </>
+      );
+    }
+
     // Default options for /orders or any other paths
     return (
       <>

@@ -108,21 +108,26 @@ export default function TradingPairsPage() {
         </div>
       </div>
       <div className="mb-8 grid gap-6 sm:gap-8 grid-cols-3 2xl:grid-cols-4">
-        <Stat
+      <Stat
           title="Last Price"
           value={'N/A'}
+          subvalue={'N/A'}
         />
         <Stat
           title="Last Price"
           value={'N/A'}
+          subvalue={'N/A'}
         />
         <Stat
           title="Last Price"
           value={'N/A'}
+          subvalue={'N/A'}
+          className="hidden 2xl:block"
         />
         <Stat
           title="Last Price"
           value={'N/A'}
+          subvalue={'N/A'}
         />
       </div>
       <Navbar>

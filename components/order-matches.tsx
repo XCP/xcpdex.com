@@ -5,6 +5,7 @@ import { Avatar } from '@/components/avatar';
 import { Badge } from '@/components/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table';
 import { formatTimeAgo } from '@/utils/formatTimeAgo';
+import { formatAddress } from '@/utils/formatAddress';
 import { ArrowPathIcon } from '@heroicons/react/24/solid';
 import { 
   OrderMatch,
@@ -194,10 +195,10 @@ export function OrderMatches({ market, setTradesCount, direction }: OrderMatches
                         </div>
                       </TableCell>
                       <TableCell className="no-ligatures">
-                        {market === match.tx1_hash ? match.tx0_address : match.tx1_address}
+                        {formatAddress(market === match.tx1_hash ? match.tx0_address : match.tx1_address)}
                       </TableCell>
                       <TableCell className="no-ligatures hidden 2xl:table-cell">
-                        {market === match.tx0_hash ? match.tx1_address : match.tx0_address}
+                        {formatAddress(market === match.tx0_hash ? match.tx1_address : match.tx0_address)}
                       </TableCell>
                       <TableCell className="text-zinc-500">
                         {formatTimeAgo(match.block_time)}

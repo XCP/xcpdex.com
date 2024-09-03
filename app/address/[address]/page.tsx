@@ -4,8 +4,9 @@ import { Stat } from '@/components/stat';
 import { Orders } from '@/components/orders';
 import { Heading } from '@/components/heading';
 import { StatusSelect } from '@/components/status-select';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { formatAmount } from '@/utils/formatAmount';
 
 export default function AddressOrdersPage({ params }: { params: { address: string } }) {
   const { address } = params;
@@ -13,7 +14,40 @@ export default function AddressOrdersPage({ params }: { params: { address: strin
   
   // Initialize status from the URL if it exists, otherwise default to 'all'
   const [status, setStatus] = useState(searchParams.get('status') || 'all');
-  
+
+  // State to hold the data fetched from the API
+  const [data, setData] = useState({
+    makerVolume: 'N/A',
+    takerVolume: 'N/A',
+    totalTrades: 'N/A',
+    lastTradeDate: 'N/A'
+  });
+
+  // Fetch data from the API when the component mounts
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`https://api.xcp.io/api/v1/address/${address}`);
+        const result = await response.json();
+
+        const formattedDate = result.last_trade_date
+        ? new Date(result.last_trade_date).toLocaleDateString('en-CA') // Formats date as YYYY-MM-DD
+        : 'N/A';
+
+        setData({
+          makerVolume: result.maker_volume_usd,
+          takerVolume: result.taker_volume_usd,
+          totalTrades: result.total_trades,
+          lastTradeDate: formattedDate,
+        });
+      } catch (error) {
+        console.error('Error fetching address data:', error);
+      }
+    };
+
+    fetchData();
+  }, [address]);
+
   const endpoint = `https://api.counterparty.info/v2/addresses/${address}/orders`;
 
   return (
@@ -32,20 +66,21 @@ export default function AddressOrdersPage({ params }: { params: { address: strin
       </div>
       <div className="mt-8 grid gap-6 sm:gap-8 grid-cols-3 2xl:grid-cols-4">
         <Stat
-          title="Last Price"
-          value={'N/A'}
+          title="Maker Volume"
+          value={`$${formatAmount(data.makerVolume, true)}`}
         />
         <Stat
-          title="Last Price"
-          value={'N/A'}
+          title="Taker Volume"
+          value={`$${formatAmount(data.takerVolume, true)}`}
         />
         <Stat
-          title="Last Price"
-          value={'N/A'}
+          title="Total Trades"
+          value={formatAmount(data.totalTrades)}
         />
         <Stat
-          title="Last Price"
-          value={'N/A'}
+          title="Last Trade"
+          value={data.lastTradeDate}
+          className="hidden 2xl:block"
         />
       </div>
       <div className="mt-8">

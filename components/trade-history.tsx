@@ -6,6 +6,7 @@ import { Badge } from '@/components/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table';
 import { formatAmountTrade } from '@/utils/formatAmountTrade';
 import { formatTimeAgo } from '@/utils/formatTimeAgo';
+import { formatAddress } from '@/utils/formatAddress';
 import { formatTradeType } from '@/utils/formatTradeType';
 import { ArrowPathIcon } from '@heroicons/react/24/solid';
 import {
@@ -25,7 +26,9 @@ interface Trade {
   price_usd: string | null;
   volume: string;
   link: string;
-  address: string;
+  maker: string;
+  taker: string;
+  tx_hash: string;
   confirmed_at: number;
 }
 
@@ -131,6 +134,7 @@ export function TradeHistory({ market, setTradesCount }: TradeHistoryProps) {
                 <TableHeader>Amount</TableHeader>
                 <TableHeader>Price</TableHeader>
                 <TableHeader>Maker</TableHeader>
+                <TableHeader className="hidden 2xl:table-cell">Taker</TableHeader>
                 <TableHeader>Time</TableHeader>
               </TableRow>
             </TableHead>
@@ -163,7 +167,10 @@ export function TradeHistory({ market, setTradesCount }: TradeHistoryProps) {
                           </div>
                       </TableCell>
                       <TableCell className="no-ligatures">
-                        {trade.address ?? formatTradeType(trade.type)}
+                        {trade.maker ? formatAddress(trade.maker) : formatTradeType(trade.type)}
+                      </TableCell>
+                      <TableCell className="no-ligatures hidden 2xl:table-cell">
+                        {trade.taker ? formatAddress(trade.taker) : formatTradeType(trade.type)}
                       </TableCell>
                       <TableCell className="text-zinc-500">
                         {formatTimeAgo(trade.confirmed_at)}

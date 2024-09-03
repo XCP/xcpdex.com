@@ -7,6 +7,7 @@ import { Avatar } from '@/components/avatar';
 import { Button } from '@/components/button';
 import { Link } from '@/components/link';
 import { Stat } from '@/components/stat';
+import { OrderBook } from '@/components/order-book';
 import { OrderMatches } from '@/components/order-matches';
 import { TradeHistory } from '@/components/trade-history';
 import OtherMarkets from '@/components/other-markets';
@@ -233,6 +234,7 @@ export default function TradePage({ params }: TradePageParams) {
         {activeTab === 'area' && <ApexAreaChart pairSlug={tradingPair} interval={activeInterval} />}
       </div>
       <Divider />
+      <OrderBook market={market} />
       <Navbar className="mt-8">
         <NavbarSection>
           <NavbarItem

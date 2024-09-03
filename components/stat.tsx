@@ -9,7 +9,7 @@ import { formatAmount } from '@/utils/formatAmount';
 interface StatProps {
   title: string;
   value: string | number;
-  subvalue: string | number;
+  subvalue?: string | number;
   issued?: number;
   burned?: number;
   className?: string;

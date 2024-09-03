@@ -161,10 +161,6 @@ export function ApplicationLayout({
                 <HomeIcon />
                 <SidebarLabel>Home</SidebarLabel>
               </SidebarItem>
-              <SidebarItem href="/events" current={pathname.startsWith('/events')}>
-                <Square2StackIcon />
-                <SidebarLabel>Events</SidebarLabel>
-              </SidebarItem>
               <SidebarItem href="/orders" current={pathname.startsWith('/orders')}>
                 <TicketIcon />
                 <SidebarLabel>Dex Orders</SidebarLabel>
@@ -172,6 +168,10 @@ export function ApplicationLayout({
               <SidebarItem href="/dispensers" current={pathname.startsWith('/dispensers')}>
                 <Cog6ToothIcon />
                 <SidebarLabel>Dispensers</SidebarLabel>
+              </SidebarItem>
+              <SidebarItem href="/vaults" current={pathname.startsWith('/vaults')}>
+                <Square2StackIcon />
+                <SidebarLabel>Emblem v2</SidebarLabel>
               </SidebarItem>
             </SidebarSection>
 

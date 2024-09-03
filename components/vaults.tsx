@@ -24,8 +24,29 @@ interface VaultsProps {
   status?: string;
 }
 
+interface Vault {
+  status: string;
+  tx_hash: string;
+  trading_pair: {
+    slug: string;
+    name: string;
+    base_asset: {
+      symbol: string;
+    };
+    quote_asset: {
+      symbol: string;
+    };
+  };
+  direction: 'sell' | 'buy';
+  quantity_remaining: number;
+  price: string;
+  maker?: string;
+  taker?: string;
+  originated_at: string;
+}
+
 export function Vaults({ endpoint, status = 'active' }: VaultsProps) {
-  const [vaults, setVaults] = useState([]);
+  const [vaults, setVaults] = useState<Vault[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalResults, setTotalResults] = useState<number>(0);
 

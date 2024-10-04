@@ -166,7 +166,7 @@ export function Dispensers({ endpoint, status = 'all' }: DispensersProps) {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Avatar src={`https://api.xcp.io/img/icon/${dispenser.asset}`} className="size-6" />
+                      <Avatar src={`https://app.xcp.io/img/icon/${dispenser.asset}`} className="size-6" />
                       <span className="font-medium">{dispenser.asset_info.asset_longname ?? dispenser.asset}/BTC</span>
                     </div>
                   </TableCell>
@@ -175,7 +175,7 @@ export function Dispensers({ endpoint, status = 'all' }: DispensersProps) {
                       <span className="ml-auto font-medium text-right">
                         {formatAmountTrade(dispenser.give_quantity_normalized)}
                       </span>
-                      <Avatar src={`https://api.xcp.io/img/icon/${dispenser.asset}`} className="size-6" />
+                      <Avatar src={`https://app.xcp.io/img/icon/${dispenser.asset}`} className="size-6" />
                     </div>
                   </TableCell>
                   <TableCell>
@@ -183,7 +183,7 @@ export function Dispensers({ endpoint, status = 'all' }: DispensersProps) {
                       <span className="ml-auto font-medium text-right">
                         {formatAmountTrade(dispenser.satoshi_price_normalized)}
                       </span>
-                      <Avatar src={`https://api.xcp.io/img/icon/BTC`} className="size-6" />
+                      <Avatar src={`https://app.xcp.io/img/icon/BTC`} className="size-6" />
                     </div>
                   </TableCell>
                   <TableCell className="no-ligatures hidden 2xl:table-cell">

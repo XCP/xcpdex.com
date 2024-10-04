@@ -62,7 +62,7 @@ const OtherMarkets: React.FC<PairDataProps> = ({ other_markets }) => {
               <TableRow key={market.slug} href={`/trade/${market.slug}`} title={market.name}>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <Avatar src={`https://api.xcp.io/img/icon/${market.quote_asset.symbol}`} className="size-6" />
+                    <Avatar src={`https://app.xcp.io/img/icon/${market.quote_asset.symbol}`} className="size-6" />
                     <span className="font-medium">{market.name}</span>
                   </div>
                 </TableCell>

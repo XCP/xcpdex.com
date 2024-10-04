@@ -183,7 +183,7 @@ export function OrderMatches({ market, setTradesCount, direction }: OrderMatches
                           <span className="ml-auto font-medium text-right">
                             {calculateAmount(orderLike)}
                           </span>
-                          <Avatar src={`https://api.xcp.io/img/icon/${getBaseAssetString(orderLike)}`} className="size-6" />
+                          <Avatar src={`https://app.xcp.io/img/icon/${getBaseAssetString(orderLike)}`} className="size-6" />
                         </div>
                       </TableCell>
                       <TableCell>
@@ -191,7 +191,7 @@ export function OrderMatches({ market, setTradesCount, direction }: OrderMatches
                           <span className="ml-auto font-medium text-right">
                             {calculatePrice(orderLike)}
                           </span>
-                          <Avatar src={`https://api.xcp.io/img/icon/${getQuoteAssetString(orderLike)}`} className="size-6" />
+                          <Avatar src={`https://app.xcp.io/img/icon/${getQuoteAssetString(orderLike)}`} className="size-6" />
                         </div>
                       </TableCell>
                       <TableCell className="no-ligatures">

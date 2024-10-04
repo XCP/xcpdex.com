@@ -83,7 +83,7 @@ export default function TradePage({ params }: TradePageParams) {
   useEffect(() => {
     const fetchPairData = async () => {
       try {
-        const response = await fetch(`https://api.xcp.io/api/v1/trading-pair/${tradingPair}`);
+        const response = await fetch(`https://app.xcp.io/api/v1/trading-pair/${tradingPair}`);
         const json = await response.json();
         setPairData(json);
       } catch (error) {
@@ -107,12 +107,12 @@ export default function TradePage({ params }: TradePageParams) {
       <div className="mt-4 mb-8 flex flex-wrap items-end justify-between gap-4">
         <div className="flex sm:flex-wrap items-center gap-6">
           <div className="w-20 shrink-0">
-            <img className="w-20 aspect-square rounded-lg shadow" src={`https://api.xcp.io/img/full/${pairData?.base_asset.asset}`} alt={tradingPair} />
+            <img className="w-20 aspect-square rounded-lg shadow" src={`https://app.xcp.io/img/full/${pairData?.base_asset.asset}`} alt={tradingPair} />
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
               <Heading>{market}</Heading>
-              <Avatar src={`https://api.xcp.io/img/icon/${pairData?.quote_asset.symbol}`} className="size-5" />
+              <Avatar src={`https://app.xcp.io/img/icon/${pairData?.quote_asset.symbol}`} className="size-5" />
             </div>
             {
               pairData ? (

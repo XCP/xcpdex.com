@@ -230,7 +230,7 @@ export function AssetBalances({ asset, issued, setHoldersCount }: AssetBalancesP
                     <TableCell className="text-zinc-500">#{index + 1}</TableCell>
                     <TableCell className="no-ligatures flex items-center  gap-2">
                       <div className="flex items-center gap-2">
-                        <Avatar src={`https://api.xcp.io/img/icon/${asset}`} className="size-6" />
+                        <Avatar src={`https://app.xcp.io/img/icon/${asset}`} className="size-6" />
                         <span className="font-medium">
                           {balance.address}
                           {isBurnAddress(balance.address) && (

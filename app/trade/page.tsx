@@ -113,7 +113,7 @@ const TradePage = () => {
   const fetchMarketData = async () => {
     try {
       const [base, quote] = assetsToTradingPairFromSymbols(selectedSellToken, selectedBuyToken);
-      const response = await fetch(`https://api.xcp.io/api/v1/swap/${base}/${quote}`);
+      const response = await fetch(`https://app.xcp.io/api/v1/swap/${base}/${quote}`);
       const data = await response.json();
       if (data && data.data) {
         const marketRate = data.data.trading_pair ? new BigNumber(data.data.trading_pair.last_trade_price) : new BigNumber(1);
@@ -277,7 +277,7 @@ const TradePage = () => {
               onClick={() => openModalForTokenSelection('sell')}
               className="flex items-center bg-transparent focus:outline-none mr-2"
             >
-              <img src={`http://api.xcp.io/img/icon/${selectedSellToken}`} alt={selectedSellToken} className="size-6 mr-2" /> 
+              <img src={`http://app.xcp.io/img/icon/${selectedSellToken}`} alt={selectedSellToken} className="size-6 mr-2" /> 
               <span className="font-medium">{selectedSellToken}</span>
               <span className="ml-2"><ChevronDownIcon className="size-5" /></span>
             </button>
@@ -312,7 +312,7 @@ const TradePage = () => {
                   onChange={handleRateChange}
                 />
                 <span className="text-gray-700 flex items-center w-6 mr-1">
-                  <img src={`http://api.xcp.io/img/icon/${getIcon()}`} alt={getIcon()} className="size-5" /> 
+                  <img src={`http://app.xcp.io/img/icon/${getIcon()}`} alt={getIcon()} className="size-5" /> 
                 </span>
               </div>
             </div>
@@ -369,7 +369,7 @@ const TradePage = () => {
               onClick={() => openModalForTokenSelection('buy')}
               className="flex items-center bg-transparent focus:outline-none mr-2"
             >
-              <img src={`http://api.xcp.io/img/icon/${selectedBuyToken}`} alt={selectedBuyToken} className="size-6 mr-2" /> 
+              <img src={`http://app.xcp.io/img/icon/${selectedBuyToken}`} alt={selectedBuyToken} className="size-6 mr-2" /> 
               <span className="font-medium">{selectedBuyToken}</span>
               <span className="ml-2"><ChevronDownIcon className="size-5" /></span>
             </button>
@@ -408,7 +408,7 @@ const TradePage = () => {
                 onClick={() => handleTokenSelection(token)}
                 className="flex items-center cursor-pointer bg-transparent focus:outline-none"
               >
-                <img src={`http://api.xcp.io/img/icon/${token}`} alt={token} className="size-5" />
+                <img src={`http://app.xcp.io/img/icon/${token}`} alt={token} className="size-5" />
                 <span className="font-medium">{token}</span>
               </Button>
             ))}

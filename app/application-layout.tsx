@@ -44,7 +44,7 @@ import {
 import { usePathname } from 'next/navigation'
 
 async function fetchTrendingMarkets() {
-  const response = await fetch('https://api.xcp.io/api/v1/trading-pair/trending', {
+  const response = await fetch('https://app.xcp.io/api/v1/trading-pair/trending', {
     method: 'GET',
   });
 
@@ -128,7 +128,7 @@ export function ApplicationLayout({
           <SidebarHeader>
             <Dropdown>
               <DropdownButton as={SidebarItem}>
-                <Avatar src="https://api.xcp.io/img/icon/default.png" />
+                <Avatar src="https://app.xcp.io/img/icon/default.png" />
                 <SidebarLabel>XCP Dex</SidebarLabel>
                 <ChevronDownIcon />
               </DropdownButton>

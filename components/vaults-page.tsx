@@ -10,7 +10,7 @@ import { useSearchParams } from 'next/navigation';
 function VaultsContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState(searchParams.get('status') || 'all');
-  const endpoint = 'https://api.xcp.io/api/v1/trade-offers';
+  const endpoint = 'https://app.xcp.io/api/v1/trade-offers';
 
   return (
     <>

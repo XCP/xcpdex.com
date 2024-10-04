@@ -50,7 +50,7 @@ const ApexChart: React.FC<ApexChartProps> = ({ pairSlug, interval }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://api.xcp.io/api/v1/ohlc/${pairSlug}?interval=${interval}`);
+        const response = await fetch(`https://app.xcp.io/api/v1/ohlc/${pairSlug}?interval=${interval}`);
         const data = await response.json();
 
         if (Array.isArray(data.data)) {

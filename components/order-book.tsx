@@ -77,7 +77,7 @@ export function OrderBook({ market }: OrderMatchesProps) {
                       <span className="ml-auto font-medium text-right">
                         {calculatePrice(order)}
                       </span>
-                      <Avatar src={`https://api.xcp.io/img/icon/${getQuoteAssetString(order)}`} className="size-6" />
+                      <Avatar src={`https://app.xcp.io/img/icon/${getQuoteAssetString(order)}`} className="size-6" />
                     </div>
                   </TableCell>
                   <TableCell>
@@ -85,7 +85,7 @@ export function OrderBook({ market }: OrderMatchesProps) {
                       <span className="ml-auto font-medium text-right">
                         {calculateAmount(order)}
                       </span>
-                      <Avatar src={`https://api.xcp.io/img/icon/${getBaseAssetString(order)}`} className="size-6" />
+                      <Avatar src={`https://app.xcp.io/img/icon/${getBaseAssetString(order)}`} className="size-6" />
                     </div>
                   </TableCell>
                   <TableCell>
@@ -93,7 +93,7 @@ export function OrderBook({ market }: OrderMatchesProps) {
                       <span className="ml-auto font-medium text-right">
                         {runningTotal.toFixed(8)}
                       </span>
-                      <Avatar src={`https://api.xcp.io/img/icon/${getQuoteAssetString(order)}`} className="size-6" />
+                      <Avatar src={`https://app.xcp.io/img/icon/${getQuoteAssetString(order)}`} className="size-6" />
                     </div>
                   </TableCell>
                 </TableRow>

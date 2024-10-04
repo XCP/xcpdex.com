@@ -154,7 +154,7 @@ export function Orders({ endpoint, status = 'all', context }: OrdersProps) {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Avatar src={`https://api.xcp.io/img/icon/${getBaseAssetString(order)}`} className="size-6" />
+                      <Avatar src={`https://app.xcp.io/img/icon/${getBaseAssetString(order)}`} className="size-6" />
                       <span className="font-medium">{getTradingPairString(order)}</span>
                     </div>
                   </TableCell>
@@ -163,7 +163,7 @@ export function Orders({ endpoint, status = 'all', context }: OrdersProps) {
                       <span className="ml-auto font-medium text-right">
                         {calculateAmount(order)}
                       </span>
-                      <Avatar src={`https://api.xcp.io/img/icon/${getTradingPairString(order).split('/')[0]}`} className="size-6" />
+                      <Avatar src={`https://app.xcp.io/img/icon/${getTradingPairString(order).split('/')[0]}`} className="size-6" />
                     </div>
                   </TableCell>
                   <TableCell>
@@ -171,7 +171,7 @@ export function Orders({ endpoint, status = 'all', context }: OrdersProps) {
                       <span className="ml-auto font-medium text-right">
                         {calculatePrice(order)}
                       </span>
-                      <Avatar src={`https://api.xcp.io/img/icon/${getTradingPairString(order).split('/')[1]}`} className="size-6" />
+                      <Avatar src={`https://app.xcp.io/img/icon/${getTradingPairString(order).split('/')[1]}`} className="size-6" />
                     </div>
                   </TableCell>
                   <TableCell className="no-ligatures hidden 2xl:table-cell">

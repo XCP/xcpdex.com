@@ -105,7 +105,7 @@ export default function OrderPage({ params }: { params: { txHash: string } }) {
           </DescriptionTerm>
           <DescriptionDetails>
             <Link href={`/trade/${getTradingPairSlug(order)}`} className="flex items-center gap-2">
-              <Avatar src={`https://api.xcp.io/img/icon/${baseAssetSymbol}`} className="size-6" />
+              <Avatar src={`https://app.xcp.io/img/icon/${baseAssetSymbol}`} className="size-6" />
               <span className="font-medium">{getTradingPairString(order)}</span>
             </Link>
           </DescriptionDetails>

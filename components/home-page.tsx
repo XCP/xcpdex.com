@@ -46,7 +46,7 @@ export default function TradingPairsPage() {
       setLoading(true);
       try {
         const response = await fetch(
-          `https://api.xcp.io/api/v1/trading-pairs/${activeMarket}?volume_range=${activeVolume}&sort_by=${sortKey}&sort_order=${sortOrder}&quality_filter=${qualityFilter}`
+          `https://app.xcp.io/api/v1/trading-pairs/${activeMarket}?volume_range=${activeVolume}&sort_by=${sortKey}&sort_order=${sortOrder}&quality_filter=${qualityFilter}`
         );
         const json = await response.json();
         setTradingPairs(json.result || []);
@@ -97,7 +97,7 @@ export default function TradingPairsPage() {
           <div>
             <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
               <Heading>XCP Dex</Heading>
-              <Avatar src={`https://api.xcp.io/img/icon/XCP`} className="size-5" />
+              <Avatar src={`https://app.xcp.io/img/icon/XCP`} className="size-5" />
             </div>
             <Text className="mt-2">Trade Bitcoin Assets Peer-to-Peer</Text>
           </div>
@@ -145,7 +145,7 @@ export default function TradingPairsPage() {
               }`} // Show BTC, XCP, ETH-ETH on all screens, BITCRYSTALS and BITCORN only on 2xl screens
             >
               <div className="flex items-center gap-2">
-                <Avatar src={`https://api.xcp.io/img/icon/${market.split('-').pop()}`} className="size-6" />
+                <Avatar src={`https://app.xcp.io/img/icon/${market.split('-').pop()}`} className="size-6" />
                 <span className="font-medium sm:inline hidden">{market.replace('ETH-', '')}</span> {/* Show text only on larger screens */}
               </div>
             </NavbarItem>
@@ -196,7 +196,7 @@ export default function TradingPairsPage() {
                   <TableRow key={pair.slug} href={`/trade/${pair.slug}`}>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Avatar src={`https://api.xcp.io/img/icon/${pair.slug.substring(0, pair.slug.lastIndexOf('_'))}`} className="size-6" />
+                        <Avatar src={`https://app.xcp.io/img/icon/${pair.slug.substring(0, pair.slug.lastIndexOf('_'))}`} className="size-6" />
                         <span className="font-medium">{pair.slug.substring(0, pair.slug.lastIndexOf('_'))}</span>
                       </div>
                     </TableCell>

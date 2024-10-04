@@ -27,7 +27,7 @@ export default function AddressOrdersPage({ params }: { params: { address: strin
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://api.xcp.io/api/v1/address/${address}`);
+        const response = await fetch(`https://app.xcp.io/api/v1/address/${address}`);
         const result = await response.json();
 
         const formattedDate = result.last_trade_date

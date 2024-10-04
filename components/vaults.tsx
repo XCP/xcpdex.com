@@ -168,7 +168,7 @@ export function Vaults({ endpoint, status = 'active' }: VaultsProps) {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Avatar src={`https://api.xcp.io/img/icon/${vault.trading_pair.base_asset.symbol}`} className="size-6" />
+                      <Avatar src={`https://app.xcp.io/img/icon/${vault.trading_pair.base_asset.symbol}`} className="size-6" />
                       <span className="font-medium">{vault.trading_pair.name}</span>
                     </div>
                   </TableCell>
@@ -177,7 +177,7 @@ export function Vaults({ endpoint, status = 'active' }: VaultsProps) {
                       <span className="ml-auto font-medium text-right">
                         {formatAmountSimple(vault.quantity_remaining)}
                       </span>
-                      <Avatar src={`https://api.xcp.io/img/icon/${vault.trading_pair.base_asset.symbol}`} className="size-6" />
+                      <Avatar src={`https://app.xcp.io/img/icon/${vault.trading_pair.base_asset.symbol}`} className="size-6" />
                     </div>
                   </TableCell>
                   <TableCell>
@@ -185,7 +185,7 @@ export function Vaults({ endpoint, status = 'active' }: VaultsProps) {
                       <span className="ml-auto font-medium text-right">
                         {formatAmountSimple(Number(vault.price).toFixed(8))}
                       </span>
-                      <Avatar src={`https://api.xcp.io/img/icon/${vault.trading_pair.quote_asset.symbol}`} className="size-6" />
+                      <Avatar src={`https://app.xcp.io/img/icon/${vault.trading_pair.quote_asset.symbol}`} className="size-6" />
                     </div>
                   </TableCell>
                   <TableCell className="no-ligatures hidden 2xl:table-cell">

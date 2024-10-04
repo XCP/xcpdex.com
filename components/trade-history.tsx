@@ -38,7 +38,7 @@ interface TradeHistoryProps {
 }
 
 async function fetchTrades(market: string, page: number): Promise<{ trades: Trade[], count: number }> {
-  const res = await fetch(`https://api.xcp.io/api/v1/trading-pair/${market}/trades?page=${page}`);
+  const res = await fetch(`https://app.xcp.io/api/v1/trading-pair/${market}/trades?page=${page}`);
   const data = await res.json();
   return { trades: data.result, count: data.result_count };
 }
@@ -155,7 +155,7 @@ export function TradeHistory({ market, setTradesCount }: TradeHistoryProps) {
                           <span className="ml-auto font-medium text-right">
                             {formatAmountTrade(trade.volume)}
                           </span>
-                          <Avatar src={`https://api.xcp.io/img/icon/${market.substring(0, market.lastIndexOf('_'))}`} className="size-6" />
+                          <Avatar src={`https://app.xcp.io/img/icon/${market.substring(0, market.lastIndexOf('_'))}`} className="size-6" />
                         </div>
                       </TableCell>
                       <TableCell>
@@ -163,7 +163,7 @@ export function TradeHistory({ market, setTradesCount }: TradeHistoryProps) {
                           <span className="ml-auto font-medium text-right">
                             {formatAmountTrade(trade.price)}
                           </span>
-                          <Avatar src={`https://api.xcp.io/img/icon/${market.substring(market.lastIndexOf('_') + 1)}`} className="size-6" />
+                          <Avatar src={`https://app.xcp.io/img/icon/${market.substring(market.lastIndexOf('_') + 1)}`} className="size-6" />
                           </div>
                       </TableCell>
                       <TableCell className="no-ligatures">
